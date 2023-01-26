@@ -11,12 +11,9 @@ from sqlparse.sql import (
     Where,
 )
 
-from sqllineage.core.handlers.base import (
-    CurrentTokenBaseHandler,
-    NextTokenBaseHandler,
-)
+from sqllineage.core.handlers.base import CurrentTokenBaseHandler, NextTokenBaseHandler
 from sqllineage.core.holders import StatementLineageHolder, SubQueryLineageHolder
-from sqllineage.core.models import SubQuery, Table
+from sqllineage.core.models import SubQuery, Table, TableMetadata
 from sqllineage.utils.sqlparse import (
     get_subquery_parentheses,
     is_subquery,
@@ -32,11 +29,14 @@ class AnalyzerContext(NamedTuple):
 class LineageAnalyzer:
     """SQL Statement Level Lineage Analyzer."""
 
-    def analyze(self, stmt: Statement) -> StatementLineageHolder:
+    def analyze(
+        self, stmt: Statement, metadata=TableMetadata()
+    ) -> StatementLineageHolder:
         """
         to analyze the Statement and store the result into :class:`sqllineage.holders.StatementLineageHolder`.
 
         :param stmt: a SQL statement parsed by `sqlparse`
+        :param metadata: metadata of the statement
         """
         if (
             stmt.get_type() == "DELETE"
@@ -48,36 +48,43 @@ class LineageAnalyzer:
         ):
             holder = StatementLineageHolder()
         elif stmt.get_type() == "DROP":
-            holder = self._extract_from_ddl_drop(stmt)
+            holder = self._extract_from_ddl_drop(stmt, metadata)
         elif (
             stmt.get_type() == "ALTER"
             or stmt.token_first(skip_cm=True).normalized == "RENAME"
         ):
-            holder = self._extract_from_ddl_alter(stmt)
+            holder = self._extract_from_ddl_alter(stmt, metadata)
         else:
             # DML parsing logic also applies to CREATE DDL
             holder = StatementLineageHolder.of(
-                self._extract_from_dml(stmt, AnalyzerContext())
+                self._extract_from_dml(stmt, AnalyzerContext(), metadata)
             )
         return holder
 
     @classmethod
-    def _extract_from_ddl_drop(cls, stmt: Statement) -> StatementLineageHolder:
+    def _extract_from_ddl_drop(
+        cls, stmt: Statement, metadata: TableMetadata
+    ) -> StatementLineageHolder:
         holder = StatementLineageHolder()
-        for table in {Table.of(t) for t in stmt.tokens if isinstance(t, Identifier)}:
+        for table in {
+            Table.of(t, metadata) for t in stmt.tokens if isinstance(t, Identifier)
+        }:
             holder.add_drop(table)
         return holder
 
     @classmethod
-    def _extract_from_ddl_alter(cls, stmt: Statement) -> StatementLineageHolder:
+    def _extract_from_ddl_alter(
+        cls, stmt: Statement, metadata: TableMetadata
+    ) -> StatementLineageHolder:
         holder = StatementLineageHolder()
         tables = []
         for t in stmt.tokens:
             if isinstance(t, Identifier):
-                tables.append(Table.of(t))
+                tables.append(Table.of(t, metadata))
             elif isinstance(t, IdentifierList):
                 for identifier in t.get_identifiers():
-                    tables.append(Table.of(identifier))
+                    tables.append(Table.of(identifier, metadata))
+
         keywords = [t for t in stmt.tokens if t.is_keyword]
         if any(k.normalized == "RENAME" for k in keywords):
             if stmt.get_type() == "ALTER" and len(tables) == 2:
@@ -95,7 +102,7 @@ class LineageAnalyzer:
 
     @classmethod
     def _extract_from_dml(
-        cls, token: TokenList, context: AnalyzerContext
+        cls, token: TokenList, context: AnalyzerContext, metadata: TableMetadata
     ) -> SubQueryLineageHolder:
         holder = SubQueryLineageHolder()
         if context.prev_cte is not None:
@@ -109,7 +116,8 @@ class LineageAnalyzer:
             handler_cls() for handler_cls in CurrentTokenBaseHandler.__subclasses__()
         ]
         next_handlers = [
-            handler_cls() for handler_cls in NextTokenBaseHandler.__subclasses__()
+            handler_cls(metadata)
+            for handler_cls in NextTokenBaseHandler.__subclasses__()
         ]
 
         subqueries = []
@@ -139,7 +147,9 @@ class LineageAnalyzer:
                 next_handler.end_of_query_cleanup(holder)
         # By recursively extracting each subquery of the parent and merge, we're doing Depth-first search
         for sq in subqueries:
-            holder |= cls._extract_from_dml(sq.token, AnalyzerContext(sq, holder.cte))
+            holder |= cls._extract_from_dml(
+                sq.token, AnalyzerContext(sq, holder.cte), metadata
+            )
         return holder
 
     @classmethod

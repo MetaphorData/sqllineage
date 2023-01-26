@@ -2,7 +2,6 @@ import argparse
 import logging
 import logging.config
 
-
 from sqllineage import DEFAULT_HOST, DEFAULT_LOGGING, DEFAULT_PORT
 from sqllineage.drawing import draw_lineage_graph
 from sqllineage.runner import LineageRunner

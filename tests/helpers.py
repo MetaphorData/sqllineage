@@ -2,8 +2,14 @@ from sqllineage.core.models import Column, Table
 from sqllineage.runner import LineageRunner
 
 
-def assert_table_lineage_equal(sql, source_tables=None, target_tables=None):
-    lr = LineageRunner(sql)
+def assert_table_lineage_equal(
+    sql,
+    source_tables=None,
+    target_tables=None,
+    default_database=None,
+    default_schema=None,
+):
+    lr = LineageRunner(sql, default_database, default_schema)
     for (_type, actual, expected) in zip(
         ["Source", "Target"],
         [lr.source_tables, lr.target_tables],

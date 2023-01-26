@@ -17,8 +17,7 @@ from typing import Any, Callable, Dict, List
 from urllib.parse import urlencode
 from wsgiref.simple_server import make_server
 
-from sqllineage import DATA_FOLDER, DEFAULT_HOST, DEFAULT_PORT
-from sqllineage import STATIC_FOLDER
+from sqllineage import DATA_FOLDER, DEFAULT_HOST, DEFAULT_PORT, STATIC_FOLDER
 from sqllineage.exceptions import SQLLineageException
 from sqllineage.utils.constant import LineageLevel
 from sqllineage.utils.helpers import extract_sql_from_args

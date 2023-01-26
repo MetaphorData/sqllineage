@@ -1,6 +1,7 @@
 from sqlparse.sql import Token
 
 from sqllineage.core.holders import SubQueryLineageHolder
+from sqllineage.core.models import TableMetadata
 
 
 class NextTokenBaseHandler:
@@ -8,8 +9,9 @@ class NextTokenBaseHandler:
     This is to address an extract pattern when a specified token indicates we should extract something from next token.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, table_metadata=TableMetadata()) -> None:
         self.indicator = False
+        self.table_metadata = table_metadata
 
     def _indicate(self, token: Token) -> bool:
         """

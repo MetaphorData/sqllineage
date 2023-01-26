@@ -21,6 +21,26 @@ def test_insert_into_with_columns_and_select():
     )
 
 
+def test_insert_into_with_columns_and_select_using_default_database_schema():
+    assert_table_lineage_equal(
+        "INSERT INTO tab1 (col1, col2) SELECT * FROM tab2",
+        {"db.schema.tab2"},
+        {"db.schema.tab1"},
+        "db",
+        "schema",
+    )
+
+
+def test_insert_into_with_columns_and_select_using_default_database():
+    assert_table_lineage_equal(
+        "INSERT INTO public.tab1 (col1, col2) SELECT * FROM public.tab2",
+        {"db.public.tab2"},
+        {"db.public.tab1"},
+        "db",
+        "schema",
+    )
+
+
 def test_insert_into_with_columns_and_select_union():
     assert_table_lineage_equal(
         "INSERT INTO tab1 (col1, col2) SELECT * FROM tab2 UNION SELECT * FROM tab3",

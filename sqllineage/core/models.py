@@ -1,5 +1,6 @@
+import logging
 import warnings
-from typing import Dict, List, Optional, Set, Union
+from typing import Dict, List, NamedTuple, Optional, Set, Union
 
 from sqlparse import tokens as T
 from sqlparse.engine import grouping
@@ -21,6 +22,8 @@ from sqllineage.exceptions import SQLLineageException
 from sqllineage.utils.entities import ColumnExpression, ColumnQualifierTuple
 from sqllineage.utils.helpers import escape_identifier_name
 from sqllineage.utils.sqlparse import get_parameters, is_subquery
+
+logger = logging.getLogger(__name__)
 
 
 class Schema:
@@ -50,6 +53,11 @@ class Schema:
         return str(self) != self.unknown
 
 
+class TableMetadata(NamedTuple):
+    default_database: Optional[str] = None
+    default_schema: Optional[str] = None
+
+
 class Table:
     def __init__(self, name: str, schema: Schema = Schema(), **kwargs):
         """
@@ -63,7 +71,7 @@ class Table:
             self.raw_name = escape_identifier_name(name)
         else:
             schema_name, table_name = name.rsplit(".", 1)
-            if len(schema_name.split(".")) > 2:
+            if schema_name.count(".") > 1:
                 # allow db.schema as schema_name, but a.b.c as schema_name is forbidden
                 raise SQLLineageException("Invalid format for table name: %s.", name)
             self.schema = Schema(schema_name)
@@ -85,7 +93,7 @@ class Table:
         return hash(str(self))
 
     @staticmethod
-    def of(identifier: Identifier) -> "Table":
+    def of(identifier: Identifier, metadata=TableMetadata()) -> "Table":
         # rewrite identifier's get_real_name method, by matching the last dot instead of the first dot, so that the
         # real name for a.b.c will be c instead of b
         dot_idx, _ = identifier._token_matching(
@@ -105,6 +113,14 @@ class Table:
             if dot_idx
             else None
         )
+
+        if not parent_name:
+            if metadata.default_database and metadata.default_schema:
+                parent_name = f"{metadata.default_database}.{metadata.default_schema}"
+        elif parent_name.count(".") == 0:
+            if metadata.default_database:
+                parent_name = f"{metadata.default_database}.{parent_name}"
+
         schema = Schema(parent_name) if parent_name is not None else Schema()
         alias = identifier.get_alias()
         kwargs = {"alias": alias} if alias else {}

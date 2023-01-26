@@ -1,16 +1,15 @@
 import logging
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import sqlparse
 from sqlparse.sql import Statement
 
 from sqllineage.core import LineageAnalyzer
 from sqllineage.core.holders import SQLLineageHolder
-from sqllineage.core.models import Column, Table
+from sqllineage.core.models import Column, Table, TableMetadata
 from sqllineage.drawing import draw_lineage_graph
 from sqllineage.io import to_cytoscape
 from sqllineage.utils.constant import LineageLevel
-
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +32,11 @@ class LineageRunner(object):
     def __init__(
         self,
         sql: str,
-        encoding: str = None,
+        default_database: Optional[str] = None,
+        default_schema: Optional[str] = None,
+        encoding: Optional[str] = None,
         verbose: bool = False,
-        draw_options: Dict[str, str] = None,
+        draw_options: Optional[Dict[str, str]] = None,
     ):
         """
         The entry point of SQLLineage after command line options are parsed.
@@ -47,6 +48,10 @@ class LineageRunner(object):
         self._encoding = encoding
         self._sql = sql
         self._verbose = verbose
+        self._metadata = TableMetadata(
+            default_database=default_database.lower() if default_database else None,
+            default_schema=default_schema.lower() if default_schema else None,
+        )
         self._draw_options = draw_options if draw_options else {}
         self._evaluated = False
         self._stmt: List[Statement] = []
@@ -176,6 +181,8 @@ Target Tables:
             )
             if s.token_first(skip_cm=True)
         ]
-        self._stmt_holders = [LineageAnalyzer().analyze(stmt) for stmt in self._stmt]
+        self._stmt_holders = [
+            LineageAnalyzer().analyze(stmt, self._metadata) for stmt in self._stmt
+        ]
         self._sql_holder = SQLLineageHolder.of(*self._stmt_holders)
         self._evaluated = True

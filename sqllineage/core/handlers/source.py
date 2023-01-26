@@ -14,7 +14,7 @@ from sqlparse.tokens import Literal, Wildcard
 
 from sqllineage.core.handlers.base import NextTokenBaseHandler
 from sqllineage.core.holders import SubQueryLineageHolder
-from sqllineage.core.models import Column, Path, SubQuery, Table
+from sqllineage.core.models import Column, Path, SubQuery, Table, TableMetadata
 from sqllineage.exceptions import SQLLineageException
 from sqllineage.utils.constant import EdgeType
 from sqllineage.utils.sqlparse import (
@@ -33,12 +33,12 @@ class SourceHandler(NextTokenBaseHandler):
         r"((LEFT\s+|RIGHT\s+|FULL\s+)?(INNER\s+|OUTER\s+|STRAIGHT\s+)?|(CROSS\s+|NATURAL\s+)?)?JOIN",
     )
 
-    def __init__(self):
+    def __init__(self, table_metadata=TableMetadata()):
         self.column_flag = False
         self.columns = []
         self.tables = []
         self.union_barriers = []
-        super().__init__()
+        super().__init__(table_metadata)
 
     def _indicate(self, token: Token) -> bool:
         if token.normalized in ("UNION", "UNION ALL"):
@@ -160,7 +160,7 @@ class SourceHandler(NextTokenBaseHandler):
                             identifier.get_alias() or identifier.get_real_name(),
                         )
                 if read is None:
-                    read = Table.of(identifier)
+                    read = Table.of(identifier, self.table_metadata)
             dataset = read
         self.tables.append(dataset)
 

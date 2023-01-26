@@ -3,7 +3,7 @@ from sqlparse.tokens import Literal, Number
 
 from sqllineage.core.handlers.base import NextTokenBaseHandler
 from sqllineage.core.holders import SubQueryLineageHolder
-from sqllineage.core.models import Path, Table
+from sqllineage.core.models import Path, Table, TableMetadata
 from sqllineage.exceptions import SQLLineageException
 
 
@@ -40,7 +40,9 @@ class TargetHandler(NextTokenBaseHandler):
                     "An Identifier is expected, got %s[value: %s] instead."
                     % (type(token).__name__, token)
                 )
-            holder.add_write(Table.of(token.token_first(skip_cm=True)))
+            holder.add_write(
+                Table.of(token.token_first(skip_cm=True), self.table_metadata)
+            )
         elif isinstance(token, Comparison):
             # create table tab1 like tab2, tab1 like tab2 will be parsed as Comparison
             # referring https://github.com/andialbrecht/sqlparse/issues/543 for further information
@@ -52,8 +54,8 @@ class TargetHandler(NextTokenBaseHandler):
                     "An Identifier is expected, got %s[value: %s] instead."
                     % (type(token).__name__, token)
                 )
-            holder.add_write(Table.of(token.left))
-            holder.add_read(Table.of(token.right))
+            holder.add_write(Table.of(token.left, self.table_metadata))
+            holder.add_read(Table.of(token.right, self.table_metadata))
         elif token.ttype == Literal.String.Single:
             holder.add_write(Path(token.value))
         elif isinstance(token, Identifier):
@@ -61,4 +63,4 @@ class TargetHandler(NextTokenBaseHandler):
                 # Special Handling for Spark Bucket Table DDL
                 pass
             else:
-                holder.add_write(Table.of(token))
+                holder.add_write(Table.of(token, self.table_metadata))
