@@ -3,7 +3,6 @@ import os
 
 def _patch_adding_window_function_token() -> None:
     from sqlparse.engine import grouping
-
     from sqllineage.utils.sqlparse import group_function_with_window
 
     grouping.group_functions = group_function_with_window
@@ -19,7 +18,6 @@ def _patch_adding_builtin_type() -> None:
 
 def _patch_updating_lateral_view_lexeme() -> None:
     import re
-
     from sqlparse.keywords import SQL_REGEX
 
     for i, (regex, lexeme) in enumerate(SQL_REGEX):

@@ -3,7 +3,7 @@ from sqlparse.tokens import Literal, Number
 
 from sqllineage.core.handlers.base import NextTokenBaseHandler
 from sqllineage.core.holders import SubQueryLineageHolder
-from sqllineage.core.models import Path, Table, TableMetadata
+from sqllineage.core.models import Path, Table
 from sqllineage.exceptions import SQLLineageException
 
 

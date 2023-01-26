@@ -2,7 +2,6 @@ import pytest
 
 from sqllineage.runner import LineageRunner
 from sqllineage.utils.entities import ColumnQualifierTuple
-
 from .helpers import assert_column_lineage_equal
 
 
