@@ -19,7 +19,8 @@ from sqlparse.sql import (
 
 from sqllineage.exceptions import SQLLineageException
 from sqllineage.utils.entities import ColumnExpression, ColumnQualifierTuple
-from sqllineage.utils.helpers import escape_identifier_name
+from sqllineage.utils.helpers import escape_identifier_name, table_fullname
+from sqllineage.utils.schemaFetcher import SchemaFetcher
 from sqllineage.utils.sqlparse import (
     get_identifier_name_and_parent,
     get_parameters,
@@ -57,8 +58,25 @@ class Schema:
 
 
 class TableMetadata(NamedTuple):
+    """
+    Data Class for Table metadata used in lineage resolution
+    """
+
     default_database: Optional[str] = None
     default_schema: Optional[str] = None
+    platform: Optional[str] = None
+    account: Optional[str] = None
+    schema_fetcher: Optional[SchemaFetcher] = None
+
+    def get_schema(self, table: str) -> List[str]:
+        """
+        get table schema using schema fetcher and the other table metadata in this object
+        """
+        if not self.schema_fetcher:
+            return []
+
+        fullname = table_fullname(table, self.default_database, self.default_schema)
+        return self.schema_fetcher.get_schema(fullname, self.platform, self.account)
 
 
 class Table:
@@ -352,20 +370,35 @@ class Column:
                 col.parent = parent
             return col
 
-        source_columns = set()
+        source_columns: Set[Column] = set()
+        alias_mapping_values = set(alias_mapping.values())
         for src_col, qualifier in self.source_columns:
             if qualifier is None:
                 if src_col == "*":
                     # select *
-                    for table in set(alias_mapping.values()):
+                    for table in alias_mapping_values:
                         source_columns.add(_to_src_col(src_col, table))
                 else:
                     # select unqualified column
                     src_column = _to_src_col(src_col, None)
-                    for table in set(alias_mapping.values()):
+                    if len(alias_mapping_values) == 1:
                         # in case of only one table, we get the right answer
-                        # in case of multiple tables, a bunch of possible tables are set
-                        src_column.parent = table
+                        src_column.parent = next(iter(alias_mapping_values))
+                    else:
+                        # in case of multiple tables, try to match col with schema
+                        if metadata.schema_fetcher:
+                            for table in alias_mapping_values:
+                                if isinstance(table, Table):
+                                    table_schema = metadata.get_schema(str(table))
+                                    if src_col in table_schema:
+                                        src_column.parent = table
+                                        break
+                                # TODO: support subquery
+
+                        if len(src_column.parent_candidates) == 0:
+                            # if cannot determine the table, a bunch of possible tables are set
+                            for table in alias_mapping_values:
+                                src_column.parent = table
                     source_columns.add(src_column)
             else:
                 parent_table = alias_mapping.get(qualifier) or Table(qualifier)

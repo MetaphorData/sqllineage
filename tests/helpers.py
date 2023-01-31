@@ -26,7 +26,14 @@ def assert_table_lineage_equal(
         ), f"\n\tExpected {_type} Table: {expected}\n\tActual {_type} Table: {actual}"
 
 
-def assert_column_lineage_equal(sql, column_lineages=None, exclude_subquery=True):
+def assert_column_lineage_equal(
+    sql,
+    column_lineages=None,
+    exclude_subquery=True,
+    default_database=None,
+    default_schema=None,
+    schema_fetcher=None,
+):
     expected = set()
     if column_lineages:
         for src, tgt in column_lineages:
@@ -36,7 +43,8 @@ def assert_column_lineage_equal(sql, column_lineages=None, exclude_subquery=True
             tgt_col = Column(tgt.column)
             tgt_col.parent = Table(tgt.qualifier)
             expected.add((src_col, tgt_col))
-    lr = LineageRunner(sql)
+
+    lr = LineageRunner(sql, default_database, default_schema, schema_fetcher)
     actual = {
         (lineage[0], lineage[-1])
         for lineage in set(lr.get_column_lineage(exclude_subquery))

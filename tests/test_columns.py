@@ -2,6 +2,7 @@ import pytest
 
 from sqllineage.runner import LineageRunner
 from sqllineage.utils.entities import ColumnQualifierTuple
+from sqllineage.utils.schemaFetcher import DummySchemaFetcher
 from .helpers import assert_column_lineage_equal
 
 
@@ -947,4 +948,33 @@ def test_column_from_create_table():
             ),
         ],
         False,
+    )
+
+
+def test_column_with_schema():
+    sql = """
+    create table tab1 as
+    SELECT
+        a1 AS col1, b1
+        FROM tab2 AS a
+        LEFT JOIN tab3 AS b
+            ON a.id = b.bid
+    ;
+    """
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("a1", "db.sch.tab2"),
+                ColumnQualifierTuple("col1", "db.sch.tab1"),
+            ),
+            (
+                ColumnQualifierTuple("b1", "db.sch.tab3"),
+                ColumnQualifierTuple("b1", "db.sch.tab1"),
+            ),
+        ],
+        False,
+        "db",
+        "sch",
+        DummySchemaFetcher({"db.sch.tab2": ["a1", "a2"], "db.sch.tab3": ["b1", "b2"]}),
     )
