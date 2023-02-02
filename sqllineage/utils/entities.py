@@ -15,4 +15,4 @@ class ColumnQualifierTuple(NamedTuple):
 
 class ColumnExpression(NamedTuple):
     is_identity: bool
-    token: Token
+    token: Optional[Token]

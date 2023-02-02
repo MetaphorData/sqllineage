@@ -123,7 +123,8 @@ class SourceHandler(NextTokenBaseHandler):
                 for tgt_col in col_grp:
                     tgt_col.parent = tgt_tbl
                     for src_col in tgt_col.to_source_columns(
-                        self._get_alias_mapping_from_table_group(tbl_grp, holder)
+                        self._get_alias_mapping_from_table_group(tbl_grp, holder),
+                        self.table_metadata,
                     ):
                         holder.add_column_lineage(src_col, tgt_col)
 

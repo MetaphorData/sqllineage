@@ -1,6 +1,7 @@
 import itertools
-from typing import Iterator, List, Union
+from typing import Iterator, List, Optional, Tuple, Union
 
+from sqlparse import tokens
 from sqlparse.engine.grouping import _group, group_functions
 from sqlparse.sql import (
     Case,
@@ -13,9 +14,10 @@ from sqlparse.sql import (
     Where,
 )
 from sqlparse.tokens import DML, Keyword, Name, Wildcard
-from sqlparse.utils import recurse
+from sqlparse.utils import imt, recurse
 
 from sqllineage.utils.entities import SubQueryTuple
+from sqllineage.utils.helpers import escape_identifier_name
 
 
 def is_token_negligible(token: TokenList) -> bool:
@@ -98,6 +100,41 @@ def is_values_clause(token: Parenthesis) -> bool:
     return False
 
 
+def get_identifier_name_and_parent(identifier: Identifier) -> Tuple[str, Optional[str]]:
+    """
+    rewrite identifier's get_real_name and get_parent_name method, by matching the last dot instead of the first dot,
+    so that the real name for a.b.c will be c instead of b, and parent will be a.b
+    """
+    dot_idx, _ = identifier._token_matching(
+        lambda token: imt(token, m=(tokens.Punctuation, ".")),
+        start=len(identifier.tokens),
+        reverse=True,
+    )
+    real_name = identifier._get_first_name(dot_idx, real_name=True)
+
+    parent_name = (
+        "".join(
+            [
+                escape_identifier_name(token.value)
+                for token in identifier.tokens[:dot_idx]
+            ]
+        )
+        if dot_idx
+        else None
+    )
+
+    return real_name, parent_name
+
+
+def get_identifier_fullname_normalized(identifier: Identifier) -> str:
+    """
+    get identifier's fullname by joining parent_name and real_name from get_identifier_name_and_parent()
+    normalized to lowercase
+    """
+    real_name, parent_name = get_identifier_name_and_parent(identifier)
+    return (f"{parent_name}.{real_name}" if parent_name else real_name).lower()
+
+
 def get_subquery_parentheses(
     token: Union[Identifier, Function, Where]
 ) -> List[SubQueryTuple]:
@@ -134,7 +171,10 @@ def get_subquery_parentheses(
     elif is_subquery(target):
         target = remove_parenthesis_between_union(target)
         subquery = [
-            SubQueryTuple(get_innermost_parenthesis(target), token.get_real_name())
+            SubQueryTuple(
+                get_innermost_parenthesis(target),
+                get_identifier_fullname_normalized(token),
+            )
         ]
     return subquery
 
