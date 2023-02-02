@@ -929,7 +929,7 @@ def test_column_from_create_table():
     create or replace transient table DB.SCH.tab1 as
     (SELECT
         a.a1 AS col1, b.b1
-        FROM DB.SCH.tab2 a 
+        FROM DB.SCH.tab2 a
         LEFT JOIN DB.SCH.tab3 AS b
             ON a.id = b.bid
     );
