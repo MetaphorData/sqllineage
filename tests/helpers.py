@@ -10,7 +10,7 @@ def assert_table_lineage_equal(
     default_schema=None,
 ):
     lr = LineageRunner(sql, default_database, default_schema)
-    for (_type, actual, expected) in zip(
+    for _type, actual, expected in zip(
         ["Source", "Target"],
         [lr.source_tables, lr.target_tables],
         [source_tables, target_tables],
