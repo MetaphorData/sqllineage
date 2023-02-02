@@ -1,5 +1,4 @@
 from sqllineage.runner import LineageRunner
-
 from .helpers import assert_table_lineage_equal
 
 
