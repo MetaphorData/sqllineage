@@ -10,7 +10,6 @@ from sqllineage.core.models import Column, Table, TableMetadata
 from sqllineage.drawing import draw_lineage_graph
 from sqllineage.io import to_cytoscape
 from sqllineage.utils.constant import LineageLevel
-from sqllineage.utils.schemaFetcher import SchemaFetcher
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +32,7 @@ class LineageRunner(object):
     def __init__(
         self,
         sql: str,
-        default_database: Optional[str] = None,
-        default_schema: Optional[str] = None,
-        schema_fetcher: Optional[SchemaFetcher] = None,
+        table_metadata: Optional[TableMetadata] = None,
         encoding: Optional[str] = None,
         verbose: bool = False,
         draw_options: Optional[Dict[str, str]] = None,
@@ -50,11 +47,7 @@ class LineageRunner(object):
         self._encoding = encoding
         self._sql = sql
         self._verbose = verbose
-        self._metadata = TableMetadata(
-            default_database=default_database.lower() if default_database else None,
-            default_schema=default_schema.lower() if default_schema else None,
-            schema_fetcher=schema_fetcher,
-        )
+        self._metadata = table_metadata or TableMetadata()
         self._draw_options = draw_options if draw_options else {}
         self._evaluated = False
         self._stmt: List[Statement] = []

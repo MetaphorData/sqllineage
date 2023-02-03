@@ -1,4 +1,4 @@
-from sqllineage.core.models import Column, Table
+from sqllineage.core.models import Column, Table, TableMetadata
 from sqllineage.runner import LineageRunner
 
 
@@ -9,7 +9,10 @@ def assert_table_lineage_equal(
     default_database=None,
     default_schema=None,
 ):
-    lr = LineageRunner(sql, default_database, default_schema)
+    lr = LineageRunner(
+        sql,
+        TableMetadata(default_database=default_database, default_schema=default_schema),
+    )
     for _type, actual, expected in zip(
         ["Source", "Target"],
         [lr.source_tables, lr.target_tables],
@@ -44,7 +47,14 @@ def assert_column_lineage_equal(
             tgt_col.parent = Table(tgt.qualifier)
             expected.add((src_col, tgt_col))
 
-    lr = LineageRunner(sql, default_database, default_schema, schema_fetcher)
+    lr = LineageRunner(
+        sql,
+        TableMetadata(
+            default_database=default_database,
+            default_schema=default_schema,
+            schema_fetcher=schema_fetcher,
+        ),
+    )
     actual = {
         (lineage[0], lineage[-1])
         for lineage in set(lr.get_column_lineage(exclude_subquery))
