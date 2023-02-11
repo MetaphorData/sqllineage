@@ -947,7 +947,6 @@ def test_column_from_create_table():
                 ColumnQualifierTuple("b1", "db.sch.tab1"),
             ),
         ],
-        False,
     )
 
 
@@ -973,7 +972,6 @@ def test_column_with_schema():
                 ColumnQualifierTuple("b1", "db.sch.tab1"),
             ),
         ],
-        False,
         "db",
         "sch",
         DummySchemaFetcher({"db.sch.tab2": ["a1", "a2"], "db.sch.tab3": ["b1", "b2"]}),

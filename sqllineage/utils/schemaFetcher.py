@@ -20,8 +20,8 @@ class DummySchemaFetcher(SchemaFetcher):
     Dummy schema fetch that uses pre-defined schemas
     """
 
-    def __init__(self, tableSchemas: Dict[str, List[str]]) -> None:
-        self._schemas = tableSchemas
+    def __init__(self, table_schema: Dict[str, List[str]]) -> None:
+        self._schemas = table_schema
 
     def get_schema(
         self, table: str, platform: Optional[str] = None, account: Optional[str] = None

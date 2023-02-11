@@ -147,9 +147,10 @@ Target Tables:
         """
         a list of column tuple :class:`sqllineage.models.Column`
         """
+        target_tables = self.target_tables if exclude_subquery else None
         # sort by target column, and then source column
         return sorted(
-            self._sql_holder.get_column_lineage(exclude_subquery),
+            self._sql_holder.get_column_lineage(exclude_subquery, target_tables),
             key=lambda x: (str(x[-1]), str(x[0])),
         )
 

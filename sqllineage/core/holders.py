@@ -11,12 +11,20 @@ DATASET_CLASSES = (Path, Table)
 
 
 class ColumnLineageMixin:
-    def get_column_lineage(self, exclude_subquery=True) -> Set[Tuple[Column, ...]]:
+    def get_column_lineage(
+        self, exclude_subquery=True, include_target_tables=None
+    ) -> Set[Tuple[Column, ...]]:
         self.graph: DiGraph  # For mypy attribute checking
         # filter all the column node in the graph
         column_nodes = [n for n in self.graph.nodes if isinstance(n, Column)]
         column_graph = self.graph.subgraph(column_nodes)
+
         source_columns = {column for column, deg in column_graph.in_degree if deg == 0}
+        if exclude_subquery:
+            source_columns = {
+                node for node in source_columns if not isinstance(node.parent, SubQuery)
+            }
+
         # if a column lineage path ends at SubQuery, then it should be pruned
         target_columns = {
             node
@@ -25,8 +33,17 @@ class ColumnLineageMixin:
         }
         if exclude_subquery:
             target_columns = {
-                node for node in target_columns if isinstance(node.parent, Table)
+                node
+                for node in target_columns
+                if isinstance(node.parent, Table)
+                or (
+                    # include the subquery with alias as target table, e.g. create table xxx as (select ...)
+                    isinstance(node.parent, SubQuery)
+                    and node.parent.alias.lower()
+                    in (str(t).lower() for t in include_target_tables or [])
+                )
             }
+
         columns = set()
         for source, target in itertools.product(source_columns, target_columns):
             simple_paths = list(nx.all_simple_paths(self.graph, source, target))

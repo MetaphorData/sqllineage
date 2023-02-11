@@ -390,7 +390,9 @@ class Column:
                             for table in alias_mapping_values:
                                 if isinstance(table, Table):
                                     table_schema = metadata.get_schema(str(table))
-                                    if src_col in table_schema:
+                                    if src_col.lower() in (
+                                        col_name.lower() for col_name in table_schema
+                                    ):
                                         src_column.parent = table
                                         break
                                 # TODO: support subquery
