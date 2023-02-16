@@ -302,26 +302,6 @@ expected = {
                 ColumnQualifierTuple("ca_state", "customer_address"),
                 ColumnQualifierTuple("state", "query06"),
             ),
-            (
-                ColumnQualifierTuple("*", "date_dim"),
-                ColumnQualifierTuple("cnt", "query06"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt", "query06"),
-            ),
-            (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("cnt", "query06"),
-            ),
-            (
-                ColumnQualifierTuple("*", "item"),
-                ColumnQualifierTuple("cnt", "query06"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt", "query06"),
-            ),
         ],
         {},
     ),
@@ -376,10 +356,6 @@ expected = {
                 ColumnQualifierTuple("bucket1", "query09"),
             ),
             (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("bucket1", "query09"),
-            ),
-            (
                 ColumnQualifierTuple("ss_ext_discount_amt", "store_sales"),
                 ColumnQualifierTuple("bucket1", "query09"),
             ),
@@ -388,10 +364,6 @@ expected = {
                 ColumnQualifierTuple("bucket2", "query09"),
             ),
             (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("bucket2", "query09"),
-            ),
-            (
                 ColumnQualifierTuple("ss_ext_discount_amt", "store_sales"),
                 ColumnQualifierTuple("bucket2", "query09"),
             ),
@@ -400,10 +372,6 @@ expected = {
                 ColumnQualifierTuple("bucket3", "query09"),
             ),
             (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("bucket3", "query09"),
-            ),
-            (
                 ColumnQualifierTuple("ss_ext_discount_amt", "store_sales"),
                 ColumnQualifierTuple("bucket3", "query09"),
             ),
@@ -412,19 +380,11 @@ expected = {
                 ColumnQualifierTuple("bucket4", "query09"),
             ),
             (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("bucket4", "query09"),
-            ),
-            (
                 ColumnQualifierTuple("ss_ext_discount_amt", "store_sales"),
                 ColumnQualifierTuple("bucket4", "query09"),
             ),
             (
                 ColumnQualifierTuple("ss_net_paid", "store_sales"),
-                ColumnQualifierTuple("bucket5", "query09"),
-            ),
-            (
-                ColumnQualifierTuple("*", "store_sales"),
                 ColumnQualifierTuple("bucket5", "query09"),
             ),
             (
@@ -475,78 +435,6 @@ expected = {
             (
                 ColumnQualifierTuple("cd_dep_college_count", "customer_demographics"),
                 ColumnQualifierTuple("cd_dep_college_count", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt1", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt1", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt1", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt2", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt2", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt2", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt3", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt3", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt3", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt4", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt4", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt4", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt5", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt5", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt5", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt6", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt6", "query10"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt6", "query10"),
             ),
         ],
         {
@@ -1243,14 +1131,6 @@ expected = {
                 ColumnQualifierTuple("c_salutation", "query34"),
             ),
             (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("cnt", "query34"),
-            ),
-            (
-                ColumnQualifierTuple("*", "date_dim"),
-                ColumnQualifierTuple("cnt", "query34"),
-            ),
-            (
                 ColumnQualifierTuple("c_preferred_cust_flag", None),
                 ColumnQualifierTuple("c_preferred_cust_flag", "query34"),
             ),
@@ -1258,14 +1138,7 @@ expected = {
                 ColumnQualifierTuple("c_last_name", None),
                 ColumnQualifierTuple("c_last_name", "query34"),
             ),
-            (
-                ColumnQualifierTuple("*", "store"),
-                ColumnQualifierTuple("cnt", "query34"),
-            ),
-            (
-                ColumnQualifierTuple("*", "household_demographics"),
-                ColumnQualifierTuple("cnt", "query34"),
-            ),
+            (ColumnQualifierTuple("cnt", None), ColumnQualifierTuple("cnt", "query34")),
         ],
         {},
     ),
@@ -1280,16 +1153,8 @@ expected = {
         {"query35"},
         [
             (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt3", "query35"),
-            ),
-            (
                 ColumnQualifierTuple("cd_dep_employed_count", None),
                 ColumnQualifierTuple("min(cd_dep_employed_count)", "query35"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt1", "query35"),
             ),
             (
                 ColumnQualifierTuple("cd_gender", None),
@@ -1298,10 +1163,6 @@ expected = {
             (
                 ColumnQualifierTuple("cd_dep_count", None),
                 ColumnQualifierTuple("min(cd_dep_count)", "query35"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt2", "query35"),
             ),
             (
                 ColumnQualifierTuple("cd_dep_college_count", None),
@@ -1320,28 +1181,12 @@ expected = {
                 ColumnQualifierTuple("min(cd_dep_college_count)", "query35"),
             ),
             (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt1", "query35"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt3", "query35"),
-            ),
-            (
                 ColumnQualifierTuple("cd_dep_college_count", None),
                 ColumnQualifierTuple("avg(cd_dep_college_count)", "query35"),
             ),
             (
                 ColumnQualifierTuple("cd_dep_college_count", None),
                 ColumnQualifierTuple("cd_dep_college_count", "query35"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt3", "query35"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt2", "query35"),
             ),
             (
                 ColumnQualifierTuple("ca_state", None),
@@ -1354,14 +1199,6 @@ expected = {
             (
                 ColumnQualifierTuple("cd_dep_count", None),
                 ColumnQualifierTuple("avg(cd_dep_count)", "query35"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt1", "query35"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt2", "query35"),
             ),
             (
                 ColumnQualifierTuple("cd_dep_employed_count", None),
@@ -2310,16 +2147,8 @@ expected = {
         {"query64"},
         [
             (
-                ColumnQualifierTuple("*", "item"),
-                ColumnQualifierTuple("cnt_2", "query64"),
-            ),
-            (
                 ColumnQualifierTuple("i_product_name", None),
                 ColumnQualifierTuple("product_name", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("cnt_2", "query64"),
             ),
             (
                 ColumnQualifierTuple("ca_street_number", "customer_address"),
@@ -2334,41 +2163,16 @@ expected = {
                 ColumnQualifierTuple("store_zip", "query64"),
             ),
             (
-                ColumnQualifierTuple("*", "date_dim"),
-                ColumnQualifierTuple("cnt", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt_2", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "promotion"),
-                ColumnQualifierTuple("cnt_2", "query64"),
-            ),
-            (
                 ColumnQualifierTuple("ca_street_name", "customer_address"),
                 ColumnQualifierTuple("c_street_name", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "store_returns"),
-                ColumnQualifierTuple("cnt_2", "query64"),
             ),
             (
                 ColumnQualifierTuple("ss_coupon_amt", None),
                 ColumnQualifierTuple("s31", "query64"),
             ),
             (
-                ColumnQualifierTuple("*", "store"),
-                ColumnQualifierTuple("cnt", "query64"),
-            ),
-            (
                 ColumnQualifierTuple("ca_street_name", "customer_address"),
                 ColumnQualifierTuple("b_street_name", "query64"),
-            ),
-            (ColumnQualifierTuple("*", "item"), ColumnQualifierTuple("cnt", "query64")),
-            (
-                ColumnQualifierTuple("*", "income_band"),
-                ColumnQualifierTuple("cnt_2", "query64"),
             ),
             (
                 ColumnQualifierTuple("ss_wholesale_cost", None),
@@ -2383,44 +2187,12 @@ expected = {
                 ColumnQualifierTuple("c_city", "query64"),
             ),
             (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("cnt", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "household_demographics"),
-                ColumnQualifierTuple("cnt_2", "query64"),
-            ),
-            (
                 ColumnQualifierTuple("ca_zip", "customer_address"),
                 ColumnQualifierTuple("c_zip", "query64"),
             ),
             (
-                ColumnQualifierTuple("*", "promotion"),
-                ColumnQualifierTuple("cnt", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "store_returns"),
-                ColumnQualifierTuple("cnt", "query64"),
-            ),
-            (
                 ColumnQualifierTuple("ss_list_price", None),
                 ColumnQualifierTuple("s22", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt_2", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "income_band"),
-                ColumnQualifierTuple("cnt", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt_2", "query64"),
             ),
             (
                 ColumnQualifierTuple("ca_zip", "customer_address"),
@@ -2443,32 +2215,12 @@ expected = {
                 ColumnQualifierTuple("syear", "query64"),
             ),
             (
-                ColumnQualifierTuple("*", "date_dim"),
-                ColumnQualifierTuple("cnt_2", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "household_demographics"),
-                ColumnQualifierTuple("cnt", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "store"),
-                ColumnQualifierTuple("cnt_2", "query64"),
-            ),
-            (
                 ColumnQualifierTuple("ss_coupon_amt", None),
                 ColumnQualifierTuple("s32", "query64"),
             ),
             (
                 ColumnQualifierTuple("d_year", "date_dim"),
                 ColumnQualifierTuple("syear_2", "query64"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt", "query64"),
             ),
         ],
         {},
@@ -3369,10 +3121,6 @@ expected = {
         {"query69"},
         [
             (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt1", "query69"),
-            ),
-            (
                 ColumnQualifierTuple("cd_purchase_estimate", None),
                 ColumnQualifierTuple("cd_purchase_estimate", "query69"),
             ),
@@ -3385,44 +3133,12 @@ expected = {
                 ColumnQualifierTuple("cd_gender", "query69"),
             ),
             (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt1", "query69"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt1", "query69"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt2", "query69"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt2", "query69"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt3", "query69"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer"),
-                ColumnQualifierTuple("cnt3", "query69"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_address"),
-                ColumnQualifierTuple("cnt3", "query69"),
-            ),
-            (
                 ColumnQualifierTuple("cd_marital_status", None),
                 ColumnQualifierTuple("cd_marital_status", "query69"),
             ),
             (
                 ColumnQualifierTuple("cd_education_status", None),
                 ColumnQualifierTuple("cd_education_status", "query69"),
-            ),
-            (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("cnt2", "query69"),
             ),
         ],
         {},
@@ -3496,30 +3212,6 @@ expected = {
         {"query72"},
         [
             (
-                ColumnQualifierTuple("*", "customer_demographics"),
-                ColumnQualifierTuple("total_cnt", "query72"),
-            ),
-            (
-                ColumnQualifierTuple("*", "item"),
-                ColumnQualifierTuple("total_cnt", "query72"),
-            ),
-            (
-                ColumnQualifierTuple("*", "promotion"),
-                ColumnQualifierTuple("total_cnt", "query72"),
-            ),
-            (
-                ColumnQualifierTuple("*", "catalog_returns"),
-                ColumnQualifierTuple("total_cnt", "query72"),
-            ),
-            (
-                ColumnQualifierTuple("*", "inventory"),
-                ColumnQualifierTuple("total_cnt", "query72"),
-            ),
-            (
-                ColumnQualifierTuple("*", "warehouse"),
-                ColumnQualifierTuple("total_cnt", "query72"),
-            ),
-            (
                 ColumnQualifierTuple("p_promo_sk", None),
                 ColumnQualifierTuple("promo", "query72"),
             ),
@@ -3530,18 +3222,6 @@ expected = {
             (
                 ColumnQualifierTuple("w_warehouse_name", None),
                 ColumnQualifierTuple("w_warehouse_name", "query72"),
-            ),
-            (
-                ColumnQualifierTuple("*", "household_demographics"),
-                ColumnQualifierTuple("total_cnt", "query72"),
-            ),
-            (
-                ColumnQualifierTuple("*", "date_dim"),
-                ColumnQualifierTuple("total_cnt", "query72"),
-            ),
-            (
-                ColumnQualifierTuple("*", "catalog_sales"),
-                ColumnQualifierTuple("total_cnt", "query72"),
             ),
             (
                 ColumnQualifierTuple("i_item_desc", None),
@@ -3559,10 +3239,6 @@ expected = {
         {"query73"},
         [
             (
-                ColumnQualifierTuple("*", "store"),
-                ColumnQualifierTuple("cnt", "query73"),
-            ),
-            (
                 ColumnQualifierTuple("c_salutation", None),
                 ColumnQualifierTuple("c_salutation", "query73"),
             ),
@@ -3575,21 +3251,10 @@ expected = {
                 ColumnQualifierTuple("c_preferred_cust_flag", "query73"),
             ),
             (
-                ColumnQualifierTuple("*", "household_demographics"),
-                ColumnQualifierTuple("cnt", "query73"),
-            ),
-            (
                 ColumnQualifierTuple("c_last_name", None),
                 ColumnQualifierTuple("c_last_name", "query73"),
             ),
-            (
-                ColumnQualifierTuple("*", "date_dim"),
-                ColumnQualifierTuple("cnt", "query73"),
-            ),
-            (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("cnt", "query73"),
-            ),
+            (ColumnQualifierTuple("cnt", None), ColumnQualifierTuple("cnt", "query73")),
         ],
         {},
     ),
@@ -4211,19 +3876,11 @@ expected = {
         {"query90"},
         [
             (
-                ColumnQualifierTuple("*", "household_demographics"),
+                ColumnQualifierTuple("amc", None),
                 ColumnQualifierTuple("am_pm_ratio", "query90"),
             ),
             (
-                ColumnQualifierTuple("*", "web_sales"),
-                ColumnQualifierTuple("am_pm_ratio", "query90"),
-            ),
-            (
-                ColumnQualifierTuple("*", "time_dim"),
-                ColumnQualifierTuple("am_pm_ratio", "query90"),
-            ),
-            (
-                ColumnQualifierTuple("*", "web_page"),
+                ColumnQualifierTuple("pmc", None),
                 ColumnQualifierTuple("am_pm_ratio", "query90"),
             ),
         ],
@@ -4335,24 +3992,7 @@ expected = {
     96: (
         {"store", "household_demographics", "time_dim", "store_sales"},
         {"query96"},
-        [
-            (
-                ColumnQualifierTuple("*", "household_demographics"),
-                ColumnQualifierTuple("count(*)", "query96"),
-            ),
-            (
-                ColumnQualifierTuple("*", "store_sales"),
-                ColumnQualifierTuple("count(*)", "query96"),
-            ),
-            (
-                ColumnQualifierTuple("*", "time_dim"),
-                ColumnQualifierTuple("count(*)", "query96"),
-            ),
-            (
-                ColumnQualifierTuple("*", "store"),
-                ColumnQualifierTuple("count(*)", "query96"),
-            ),
-        ],
+        [],
         {},
     ),
     97: (

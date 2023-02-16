@@ -268,10 +268,14 @@ class Column:
     def _extract_source_columns(token: Token) -> List[ColumnQualifierTuple]:
         if isinstance(token, Function):
             # max(col1) AS col2
-            source_columns = [
-                cqt
+            # get parameters from the function and ignore count(*) since it doesn't generate column lineage
+            param_tokens = [
+                tk
                 for tk in get_parameters(token)
-                for cqt in Column._extract_source_columns(tk)
+                if token.tokens[0].normalized != "count" or tk.ttype != T.Wildcard
+            ]
+            source_columns = [
+                cqt for tk in param_tokens for cqt in Column._extract_source_columns(tk)
             ]
         elif isinstance(token, Parenthesis):
             if is_subquery(token):

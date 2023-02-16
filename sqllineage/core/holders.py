@@ -1,5 +1,5 @@
 import itertools
-from typing import Set, Tuple, Union
+from typing import List, Optional, Set, Tuple, Union
 
 import networkx as nx
 from networkx import DiGraph
@@ -12,7 +12,7 @@ DATASET_CLASSES = (Path, Table)
 
 class ColumnLineageMixin:
     def get_column_lineage(
-        self, exclude_subquery=True, include_target_tables=None
+        self, exclude_subquery=True, include_target_tables: Optional[List[Table]] = None
     ) -> Set[Tuple[Column, ...]]:
         self.graph: DiGraph  # For mypy attribute checking
         # filter all the column node in the graph
@@ -32,6 +32,9 @@ class ColumnLineageMixin:
             if isinstance(node, Column) and deg == 0
         }
         if exclude_subquery:
+            include_target_tables_set = (
+                set(include_target_tables) if include_target_tables else {}
+            )
             target_columns = {
                 node
                 for node in target_columns
@@ -39,8 +42,7 @@ class ColumnLineageMixin:
                 or (
                     # include the subquery with alias as target table, e.g. create table xxx as (select ...)
                     isinstance(node.parent, SubQuery)
-                    and node.parent.alias.lower()
-                    in (str(t).lower() for t in include_target_tables or [])
+                    and Table(node.parent.alias) in include_target_tables_set
                 )
             }
 

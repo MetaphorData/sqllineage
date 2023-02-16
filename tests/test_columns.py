@@ -63,12 +63,9 @@ FROM tab2"""
                 ColumnQualifierTuple("col1", "tab2"),
                 ColumnQualifierTuple("max(col1)", "tab1"),
             ),
-            (
-                ColumnQualifierTuple("*", "tab2"),
-                ColumnQualifierTuple("count(*)", "tab1"),
-            ),
         ],
     )
+
     sql = """INSERT OVERWRITE TABLE tab1
 SELECT max(col1) AS col2,
        count(*)  AS cnt
@@ -80,9 +77,9 @@ FROM tab2"""
                 ColumnQualifierTuple("col1", "tab2"),
                 ColumnQualifierTuple("col2", "tab1"),
             ),
-            (ColumnQualifierTuple("*", "tab2"), ColumnQualifierTuple("cnt", "tab1")),
         ],
     )
+
     sql = """INSERT OVERWRITE TABLE tab1
 SELECT cast(col1 as timestamp)
 FROM tab2"""
@@ -95,6 +92,7 @@ FROM tab2"""
             )
         ],
     )
+
     sql = """INSERT OVERWRITE TABLE tab1
 SELECT cast(col1 as timestamp) as col2
 FROM tab2"""
@@ -945,6 +943,30 @@ def test_column_from_create_table():
             (
                 ColumnQualifierTuple("b1", "db.sch.tab3"),
                 ColumnQualifierTuple("b1", "db.sch.tab1"),
+            ),
+        ],
+    )
+
+
+def test_column_count_star():
+    sql = """
+    create or replace table DB.SCH.tab1 as
+    (SELECT
+        a.a1, count(*) ct1, COUNT(DISTINCT a.a2) ct2, count(1) ct3
+        FROM tab2 a
+        JOIN tab3 b ON a.id = b.bid
+    );
+    """
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("a1", "tab2"),
+                ColumnQualifierTuple("a1", "db.sch.tab1"),
+            ),
+            (
+                ColumnQualifierTuple("a2", "tab2"),
+                ColumnQualifierTuple("ct2", "db.sch.tab1"),
             ),
         ],
     )
