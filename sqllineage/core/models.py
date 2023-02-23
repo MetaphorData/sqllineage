@@ -1,6 +1,6 @@
 import logging
 import warnings
-from typing import Dict, List, NamedTuple, Optional, Set, Union
+from typing import Dict, List, NamedTuple, Optional, Set, Tuple, Union
 
 from sqlparse import tokens as T
 from sqlparse.engine import grouping
@@ -359,11 +359,15 @@ class Column:
                 source_columns = []
         return source_columns
 
-    def to_source_columns(
-        self, alias_mapping: Dict[str, Union[Table, SubQuery]], metadata=TableMetadata()
-    ) -> Set["Column"]:
+    def find_column_lineage(
+        self,
+        alias_mapping: Dict[str, Union[Table, SubQuery]],
+        subquery_columns: Dict[SubQuery, Set["Column"]],
+        metadata=TableMetadata(),
+    ) -> List[Tuple["Column", "Column"]]:
         """
-        Best guess for source table given all the possible table/subquery and their alias.
+        Best effort of finding column lineage (source table) given all the possible table/subquery and their alias.
+        Returns the column lineage tuples and the resolved target columns (in the case of *)
         """
 
         def _to_src_col(
@@ -374,14 +378,49 @@ class Column:
                 col.parent = parent
             return col
 
-        source_columns: Set[Column] = set()
+        def _resolve_star(
+            table: Union[Table, SubQuery],
+            subquery_columns: Dict[SubQuery, Set["Column"]],
+            metadata: TableMetadata,
+        ) -> List[Column]:
+            if isinstance(table, Table):
+                if metadata.schema_fetcher:
+                    table_schema = metadata.get_schema(str(table))
+                    if len(table_schema) > 0:
+                        return [_to_src_col(col, table) for col in table_schema]
+            else:  # table is subquery
+                if table in subquery_columns:
+                    return list(subquery_columns[table])
+            # if cannot resolve wildcard column, return empty array
+            return []
+
+        def _add_star_column_lineage(
+            table: Union[Table, SubQuery],
+            subquery_columns: Dict[SubQuery, Set["Column"]],
+            metadata: TableMetadata,
+            column_lineage: Set[Tuple[Column, Column]],
+        ):
+            resolved_columns = _resolve_star(table, subquery_columns, metadata)
+            if len(resolved_columns) > 0:
+                for resolved_col in resolved_columns:
+                    column_lineage.add(
+                        (resolved_col, _to_src_col(resolved_col.raw_name, self.parent))
+                    )
+            else:
+                # in case the wildcard * cannot be resolved to real columns, use it (*) in column lineage
+                column_lineage.add((_to_src_col("*", table), self))
+
+        column_lineage: Set[Tuple[Column, Column]] = set()
         alias_mapping_values = set(alias_mapping.values())
+
         for src_col, qualifier in self.source_columns:
             if qualifier is None:
                 if src_col == "*":
                     # select *
                     for table in alias_mapping_values:
-                        source_columns.add(_to_src_col(src_col, table))
+                        _add_star_column_lineage(
+                            table, subquery_columns, metadata, column_lineage
+                        )
                 else:
                     # select unqualified column
                     src_column = _to_src_col(src_col, None)
@@ -389,8 +428,17 @@ class Column:
                         # in case of only one table, we get the right answer
                         src_column.parent = next(iter(alias_mapping_values))
                     else:
-                        # in case of multiple tables, try to match col with schema
-                        if metadata.schema_fetcher:
+                        # in case of multiple tables, try to match col from subquery or table schema
+                        found_match = False
+                        for sq, sq_columns in subquery_columns.items():
+                            if src_col.lower() in (
+                                str(sq_column) for sq_column in sq_columns
+                            ):
+                                src_column.parent = sq
+                                found_match = True
+                                break
+
+                        if not found_match and metadata.schema_fetcher:
                             for table in alias_mapping_values:
                                 if isinstance(table, Table):
                                     table_schema = metadata.get_schema(str(table))
@@ -398,15 +446,22 @@ class Column:
                                         col_name.lower() for col_name in table_schema
                                     ):
                                         src_column.parent = table
+                                        found_match = True
                                         break
-                                # TODO: support subquery
 
-                        if len(src_column.parent_candidates) == 0:
+                        if not found_match:
                             # if cannot determine the table, a bunch of possible tables are set
                             for table in alias_mapping_values:
                                 src_column.parent = table
-                    source_columns.add(src_column)
+
+                    column_lineage.add((src_column, self))
             else:
                 parent_table = alias_mapping.get(qualifier) or Table(qualifier)
-                source_columns.add(_to_src_col(src_col, parent_table))
-        return source_columns
+                if src_col == "*":
+                    _add_star_column_lineage(
+                        parent_table, subquery_columns, metadata, column_lineage
+                    )
+                else:
+                    column_lineage.add((_to_src_col(src_col, parent_table), self))
+
+        return list(column_lineage)

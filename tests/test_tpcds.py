@@ -783,7 +783,32 @@ expected = {
     21: (
         {"date_dim", "inventory", "warehouse", "item"},
         {"query21"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("d_date", None),
+                ColumnQualifierTuple("inv_after", "query21"),
+            ),
+            (
+                ColumnQualifierTuple("inv_quantity_on_hand", None),
+                ColumnQualifierTuple("inv_after", "query21"),
+            ),
+            (
+                ColumnQualifierTuple("inv_quantity_on_hand", None),
+                ColumnQualifierTuple("inv_before", "query21"),
+            ),
+            (
+                ColumnQualifierTuple("d_date", None),
+                ColumnQualifierTuple("inv_before", "query21"),
+            ),
+            (
+                ColumnQualifierTuple("w_warehouse_name", None),
+                ColumnQualifierTuple("w_warehouse_name", "query21"),
+            ),
+            (
+                ColumnQualifierTuple("i_item_id", None),
+                ColumnQualifierTuple("i_item_id", "query21"),
+            ),
+        ],
         {},
     ),
     22: (
@@ -966,7 +991,80 @@ expected = {
     28: (
         {"store_sales"},
         {"query28"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B1_LP", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B5_LP", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B1_CNTD", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B6_CNT", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B4_CNT", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B3_CNT", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B3_CNTD", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B4_CNTD", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B5_CNT", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B6_CNTD", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B6_LP", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B3_LP", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B1_CNT", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B4_LP", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B2_CNTD", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B5_CNTD", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B2_CNT", "query28"),
+            ),
+            (
+                ColumnQualifierTuple("ss_list_price", "store_sales"),
+                ColumnQualifierTuple("B2_LP", "query28"),
+            ),
+        ],
         {},
     ),
     29: (
@@ -1137,6 +1235,10 @@ expected = {
             (
                 ColumnQualifierTuple("c_last_name", None),
                 ColumnQualifierTuple("c_last_name", "query34"),
+            ),
+            (
+                ColumnQualifierTuple("ss_ticket_number", None),
+                ColumnQualifierTuple("ss_ticket_number", "query34"),
             ),
             (ColumnQualifierTuple("cnt", None), ColumnQualifierTuple("cnt", "query34")),
         ],
@@ -1530,6 +1632,10 @@ expected = {
                 ColumnQualifierTuple("i_product_name", "item"),
                 ColumnQualifierTuple("best_performing", "query44"),
             ),
+            (
+                ColumnQualifierTuple("ss_net_profit", "store_sales"),
+                ColumnQualifierTuple("rnk", "query44"),
+            ),
         ],
         {},
     ),
@@ -1587,13 +1693,78 @@ expected = {
                 ColumnQualifierTuple("c_first_name", None),
                 ColumnQualifierTuple("c_first_name", "query46"),
             ),
+            (
+                ColumnQualifierTuple("ss_ticket_number", None),
+                ColumnQualifierTuple("ss_ticket_number", "query46"),
+            ),
         ],
         {},
     ),
     47: (
         {"store", "item", "store_sales", "date_dim"},
         {"query47"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("i_brand", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("s_store_name", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("s_company_name", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("nsum", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("s_store_name", None),
+                ColumnQualifierTuple("s_store_name", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("d_year", None),
+                ColumnQualifierTuple("d_year", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("d_year", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("d_moy", None),
+                ColumnQualifierTuple("d_moy", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("sum_sales", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("psum", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("i_category", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("i_brand", None),
+                ColumnQualifierTuple("i_brand", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("s_company_name", None),
+                ColumnQualifierTuple("s_company_name", "query47"),
+            ),
+            (
+                ColumnQualifierTuple("i_category", None),
+                ColumnQualifierTuple("i_category", "query47"),
+            ),
+        ],
         {},
     ),
     48: (
@@ -1789,7 +1960,92 @@ expected = {
     51: (
         {"web_sales", "store_sales", "date_dim"},
         {"query51"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("preceding", None),
+                ColumnQualifierTuple("store_sales", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("preceding", None),
+                ColumnQualifierTuple("web_sales", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ws_item_sk", None),
+                ColumnQualifierTuple("item_sk", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ws_item_sk", None),
+                ColumnQualifierTuple("store_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ws_sales_price", None),
+                ColumnQualifierTuple("web_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ss_item_sk", None),
+                ColumnQualifierTuple("web_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ws_sales_price", None),
+                ColumnQualifierTuple("web_sales", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("d_date", None),
+                ColumnQualifierTuple("web_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("preceding", None),
+                ColumnQualifierTuple("store_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ss_item_sk", None),
+                ColumnQualifierTuple("store_sales", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("d_date", None),
+                ColumnQualifierTuple("web_sales", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("store_sales", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("d_date", None),
+                ColumnQualifierTuple("store_sales", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ss_item_sk", None),
+                ColumnQualifierTuple("item_sk", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ss_item_sk", None),
+                ColumnQualifierTuple("store_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("d_date", None),
+                ColumnQualifierTuple("store_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("store_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ws_item_sk", None),
+                ColumnQualifierTuple("web_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("ws_item_sk", None),
+                ColumnQualifierTuple("web_sales", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("preceding", None),
+                ColumnQualifierTuple("web_cumulative", "query51"),
+            ),
+            (
+                ColumnQualifierTuple("d_date", None),
+                ColumnQualifierTuple("d_date", "query51"),
+            ),
+        ],
         {},
     ),
     52: (
@@ -1818,7 +2074,24 @@ expected = {
     53: (
         {"store", "item", "store_sales", "date_dim"},
         {"query53"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("i_manufact_id", None),
+                ColumnQualifierTuple("avg_quarterly_sales", "query53"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("sum_sales", "query53"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("avg_quarterly_sales", "query53"),
+            ),
+            (
+                ColumnQualifierTuple("i_manufact_id", None),
+                ColumnQualifierTuple("i_manufact_id", "query53"),
+            ),
+        ],
         {},
     ),
     54: (
@@ -1871,7 +2144,60 @@ expected = {
     57: (
         {"call_center", "catalog_sales", "item", "date_dim"},
         {"query57"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("d_moy", None),
+                ColumnQualifierTuple("d_moy", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("cs_sales_price", None),
+                ColumnQualifierTuple("sum_sales", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("cs_sales_price", None),
+                ColumnQualifierTuple("psum", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("d_year", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("i_category", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("i_category", None),
+                ColumnQualifierTuple("i_category", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("cc_name", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("cc_name", None),
+                ColumnQualifierTuple("cc_name", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("d_year", None),
+                ColumnQualifierTuple("d_year", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("i_brand", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("cs_sales_price", None),
+                ColumnQualifierTuple("nsum", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("i_brand", None),
+                ColumnQualifierTuple("i_brand", "query57"),
+            ),
+            (
+                ColumnQualifierTuple("cs_sales_price", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query57"),
+            ),
+        ],
         {},
     ),
     58: (
@@ -2125,7 +2451,24 @@ expected = {
     63: (
         {"store", "item", "store_sales", "date_dim"},
         {"query63"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query63"),
+            ),
+            (
+                ColumnQualifierTuple("i_manager_id", None),
+                ColumnQualifierTuple("i_manager_id", "query63"),
+            ),
+            (
+                ColumnQualifierTuple("i_manager_id", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query63"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("sum_sales", "query63"),
+            ),
+        ],
         {},
     ),
     64: (
@@ -3065,7 +3408,60 @@ expected = {
     67: (
         {"store", "item", "store_sales", "date_dim"},
         {"query67"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("ss_quantity", None),
+                ColumnQualifierTuple("sumsales", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("i_category", None),
+                ColumnQualifierTuple("i_category", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("i_class", None),
+                ColumnQualifierTuple("i_class", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("sumsales", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("d_qoy", None),
+                ColumnQualifierTuple("d_qoy", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("d_year", None),
+                ColumnQualifierTuple("d_year", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("rk", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("i_brand", None),
+                ColumnQualifierTuple("i_brand", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("s_store_id", None),
+                ColumnQualifierTuple("s_store_id", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("ss_quantity", None),
+                ColumnQualifierTuple("rk", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("i_category", None),
+                ColumnQualifierTuple("rk", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("d_moy", None),
+                ColumnQualifierTuple("d_moy", "query67"),
+            ),
+            (
+                ColumnQualifierTuple("i_product_name", None),
+                ColumnQualifierTuple("i_product_name", "query67"),
+            ),
+        ],
         {},
     ),
     68: (
@@ -3106,6 +3502,10 @@ expected = {
             (
                 ColumnQualifierTuple("ss_ext_list_price", None),
                 ColumnQualifierTuple("list_price", "query68"),
+            ),
+            (
+                ColumnQualifierTuple("ss_ticket_number", None),
+                ColumnQualifierTuple("ss_ticket_number", "query68"),
             ),
         ],
         {},
@@ -3253,6 +3653,10 @@ expected = {
             (
                 ColumnQualifierTuple("c_last_name", None),
                 ColumnQualifierTuple("c_last_name", "query73"),
+            ),
+            (
+                ColumnQualifierTuple("ss_ticket_number", None),
+                ColumnQualifierTuple("ss_ticket_number", "query73"),
             ),
             (ColumnQualifierTuple("cnt", None), ColumnQualifierTuple("cnt", "query73")),
         ],
@@ -3485,6 +3889,10 @@ expected = {
                 ColumnQualifierTuple("ratio", "query78"),
             ),
             (
+                ColumnQualifierTuple("ws_quantity", None),
+                ColumnQualifierTuple("ratio", "query78"),
+            ),
+            (
                 ColumnQualifierTuple("ws_wholesale_cost", None),
                 ColumnQualifierTuple("other_chan_wholesale_cost", "query78"),
             ),
@@ -3505,14 +3913,6 @@ expected = {
                 ColumnQualifierTuple("other_chan_sales_price", "query78"),
             ),
             (
-                ColumnQualifierTuple("ws_quantity", None),
-                ColumnQualifierTuple("ratio", "query78"),
-            ),
-            (
-                ColumnQualifierTuple("d_year", None),
-                ColumnQualifierTuple("ss_sold_year", "query78"),
-            ),
-            (
                 ColumnQualifierTuple("ss_sales_price", None),
                 ColumnQualifierTuple("store_sales_price", "query78"),
             ),
@@ -3521,8 +3921,24 @@ expected = {
                 ColumnQualifierTuple("other_chan_qty", "query78"),
             ),
             (
+                ColumnQualifierTuple("cs_quantity", None),
+                ColumnQualifierTuple("other_chan_qty", "query78"),
+            ),
+            (
                 ColumnQualifierTuple("ss_quantity", None),
                 ColumnQualifierTuple("store_qty", "query78"),
+            ),
+            (
+                ColumnQualifierTuple("ss_customer_sk", None),
+                ColumnQualifierTuple("ss_customer_sk", "query78"),
+            ),
+            (
+                ColumnQualifierTuple("ss_item_sk", None),
+                ColumnQualifierTuple("ss_item_sk", "query78"),
+            ),
+            (
+                ColumnQualifierTuple("d_year", None),
+                ColumnQualifierTuple("ss_sold_year", "query78"),
             ),
         ],
         {},
@@ -3550,6 +3966,10 @@ expected = {
             (
                 ColumnQualifierTuple("c_last_name", None),
                 ColumnQualifierTuple("c_last_name", "query79"),
+            ),
+            (
+                ColumnQualifierTuple("ss_ticket_number", None),
+                ColumnQualifierTuple("ss_ticket_number", "query79"),
             ),
         ],
         {},
@@ -3868,7 +4288,56 @@ expected = {
     89: (
         {"store", "item", "store_sales", "date_dim"},
         {"query89"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("i_category", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("s_company_name", None),
+                ColumnQualifierTuple("s_company_name", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("i_category", None),
+                ColumnQualifierTuple("i_category", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("i_class", None),
+                ColumnQualifierTuple("i_class", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("i_brand", None),
+                ColumnQualifierTuple("i_brand", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("i_brand", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("d_moy", None),
+                ColumnQualifierTuple("d_moy", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("s_store_name", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("s_company_name", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("sum_sales", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("ss_sales_price", None),
+                ColumnQualifierTuple("avg_monthly_sales", "query89"),
+            ),
+            (
+                ColumnQualifierTuple("s_store_name", None),
+                ColumnQualifierTuple("s_store_name", "query89"),
+            ),
+        ],
         {},
     ),
     90: (

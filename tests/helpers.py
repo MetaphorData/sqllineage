@@ -1,4 +1,4 @@
-from sqllineage.core.models import Column, Table, TableMetadata
+from sqllineage.core.models import Column, SubQuery, Table, TableMetadata
 from sqllineage.runner import LineageRunner
 
 
@@ -59,6 +59,13 @@ def _assert_column_lineage(
     column_lineages=None,
     exclude_subquery=True,
 ):
+    def _convert_target_subquery_to_table(col: Column) -> Column:
+        if isinstance(col.parent, SubQuery):
+            updated_col = Column(col.raw_name)
+            updated_col.parent = Table(col.parent.alias)
+            return updated_col
+        return col
+
     expected = set()
     for src, tgt in column_lineages or []:
         src_col = Column(src.column)
@@ -69,9 +76,14 @@ def _assert_column_lineage(
         expected.add((src_col, tgt_col))
 
     fetched_lineages = set(lr.get_column_lineage(exclude_subquery))
-    actual = {(lineage[0], lineage[-1]) for lineage in fetched_lineages}
+    actual = set(
+        [
+            (lineage[0], _convert_target_subquery_to_table(lineage[-1]))
+            for lineage in fetched_lineages
+        ]
+    )
     assert (
-        set(actual) == expected
+        actual == expected
     ), f"\n\tExpected Lineage: {expected}\n\tActual Lineage: {actual}"
 
 

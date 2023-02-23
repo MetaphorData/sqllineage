@@ -50,6 +50,27 @@ FROM tab2 a
         ],
     )
 
+    sql = """
+        create table tab1 as
+        SELECT * FROM (SELECT a1, a2 FROM tab2) a
+        ;
+        """
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("a1", "db.sch.tab2"),
+                ColumnQualifierTuple("a1", "db.sch.tab1"),
+            ),
+            (
+                ColumnQualifierTuple("a2", "db.sch.tab2"),
+                ColumnQualifierTuple("a2", "db.sch.tab1"),
+            ),
+        ],
+        "db",
+        "sch",
+    )
+
 
 def test_select_column_using_function():
     sql = """INSERT OVERWRITE TABLE tab1
@@ -997,4 +1018,50 @@ def test_column_with_schema():
         "db",
         "sch",
         DummySchemaFetcher({"db.sch.tab2": ["a1", "a2"], "db.sch.tab3": ["b1", "b2"]}),
+    )
+
+    sql = """
+        create table tab1 as
+        SELECT * FROM tab2
+        ;
+        """
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("a1", "db.sch.tab2"),
+                ColumnQualifierTuple("a1", "db.sch.tab1"),
+            ),
+            (
+                ColumnQualifierTuple("a2", "db.sch.tab2"),
+                ColumnQualifierTuple("a2", "db.sch.tab1"),
+            ),
+        ],
+        "db",
+        "sch",
+        DummySchemaFetcher({"db.sch.tab2": ["a1", "a2"]}),
+    )
+
+
+def test_column_star_with_schema():
+    sql = """
+    create table tab1 as
+    (SELECT * FROM tab2)
+    ;
+    """
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("a1", "db.sch.tab2"),
+                ColumnQualifierTuple("a1", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("a2", "db.sch.tab2"),
+                ColumnQualifierTuple("a2", "tab1"),
+            ),
+        ],
+        "db",
+        "sch",
+        DummySchemaFetcher({"db.sch.tab2": ["a1", "a2"]}),
     )

@@ -25,24 +25,25 @@ class ColumnLineageMixin:
                 node for node in source_columns if not isinstance(node.parent, SubQuery)
             }
 
-        # if a column lineage path ends at SubQuery, then it should be pruned
         target_columns = {
             node
             for node, deg in column_graph.out_degree
             if isinstance(node, Column) and deg == 0
         }
         if exclude_subquery:
-            include_target_tables_set = (
-                set(include_target_tables) if include_target_tables else {}
+            # if a column lineage path ends at SubQuery, then it should be pruned,
+            # except the subquery with alias as target table, e.g. create table xxx as (select ...)
+            include_target_tables_set = set(
+                [tbl.raw_name.lower() for tbl in include_target_tables or []]
             )
             target_columns = {
                 node
                 for node in target_columns
                 if isinstance(node.parent, Table)
                 or (
-                    # include the subquery with alias as target table, e.g. create table xxx as (select ...)
                     isinstance(node.parent, SubQuery)
-                    and Table(node.parent.alias) in include_target_tables_set
+                    and Table(node.parent.alias).raw_name.lower()
+                    in include_target_tables_set
                 )
             }
 

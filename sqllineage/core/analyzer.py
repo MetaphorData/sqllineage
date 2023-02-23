@@ -14,6 +14,7 @@ from sqlparse.sql import (
 from sqllineage.core.handlers.base import CurrentTokenBaseHandler, NextTokenBaseHandler
 from sqllineage.core.holders import StatementLineageHolder, SubQueryLineageHolder
 from sqllineage.core.models import SubQuery, Table, TableMetadata
+from sqllineage.exceptions import SQLLineageException
 from sqllineage.utils.sqlparse import (
     get_subquery_parentheses,
     is_subquery,
@@ -143,13 +144,22 @@ class LineageAnalyzer:
                     next_handler.handle(sub_token, holder)
         else:
             # call end of query hook here as loop is over
+            target_table = None
+            if holder.write:
+                if len(holder.write) > 1:
+                    raise SQLLineageException
+                target_table = next(iter(holder.write))
+
+            # recursively extracting each subquery of the parent and merge
+            for sq in subqueries:
+                sq_holder = cls._extract_from_dml(
+                    sq.token, AnalyzerContext(sq, holder.cte), metadata
+                )
+                holder |= sq_holder
+
             for next_handler in next_handlers:
-                next_handler.end_of_query_cleanup(holder)
-        # By recursively extracting each subquery of the parent and merge, we're doing Depth-first search
-        for sq in subqueries:
-            holder |= cls._extract_from_dml(
-                sq.token, AnalyzerContext(sq, holder.cte), metadata
-            )
+                next_handler.end_of_query_cleanup(holder, target_table)
+
         return holder
 
     @classmethod

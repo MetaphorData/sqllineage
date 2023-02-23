@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Set, Union
 
 from sqlparse.sql import (
     Case,
@@ -104,9 +104,15 @@ class SourceHandler(NextTokenBaseHandler):
         for token in column_tokens:
             self.columns.append(Column.of(token))
 
-    def end_of_query_cleanup(self, holder: SubQueryLineageHolder) -> None:
+    def end_of_query_cleanup(
+        self,
+        holder: SubQueryLineageHolder,
+        target_table: Optional[Union[SubQuery, Table]],
+    ) -> None:
         for i, tbl in enumerate(self.tables):
             holder.add_read(tbl)
+        subquery_columns = self._find_subquery_columns(holder)
+
         self.union_barriers.append((len(self.columns), len(self.tables)))
         for i, (col_barrier, tbl_barrier) in enumerate(self.union_barriers):
             prev_col_barrier, prev_tbl_barrier = (
@@ -114,19 +120,16 @@ class SourceHandler(NextTokenBaseHandler):
             )
             col_grp = self.columns[prev_col_barrier:col_barrier]
             tbl_grp = self.tables[prev_tbl_barrier:tbl_barrier]
-            tgt_tbl = None
-            if holder.write:
-                if len(holder.write) > 1:
-                    raise SQLLineageException
-                tgt_tbl = list(holder.write)[0]
-            if tgt_tbl:
+            if target_table:
                 for tgt_col in col_grp:
-                    tgt_col.parent = tgt_tbl
-                    for src_col in tgt_col.to_source_columns(
+                    tgt_col.parent = target_table
+                    column_lineage = tgt_col.find_column_lineage(
                         self._get_alias_mapping_from_table_group(tbl_grp, holder),
+                        subquery_columns,
                         self.table_metadata,
-                    ):
-                        holder.add_column_lineage(src_col, tgt_col)
+                    )
+                    for source_col, target_col in column_lineage:
+                        holder.add_column_lineage(source_col, target_col)
 
     def _add_dataset_from_identifier(
         self, identifier: Identifier, holder: SubQueryLineageHolder
@@ -188,3 +191,20 @@ class SourceHandler(NextTokenBaseHandler):
             },
             **{str(table): table for table in table_group if isinstance(table, Table)},
         }
+
+    @classmethod
+    def _find_subquery_columns(
+        cls,
+        holder: SubQueryLineageHolder,
+    ) -> Dict[SubQuery, Set[Column]]:
+        """
+        Finds the mapping between subqueries and their columns from the holder graph
+        """
+        mapping: Dict[SubQuery, Set[Column]] = {}
+        for src, tgt, attr in holder.graph.edges(data=True):
+            if attr.get("type") == EdgeType.HAS_COLUMN and isinstance(src, SubQuery):
+                if src not in mapping:
+                    mapping[src] = set()
+                mapping[src].add(tgt)
+
+        return mapping

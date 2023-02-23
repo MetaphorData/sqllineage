@@ -1,7 +1,9 @@
+from typing import Optional, Union
+
 from sqlparse.sql import Token
 
 from sqllineage.core.holders import SubQueryLineageHolder
-from sqllineage.core.models import TableMetadata
+from sqllineage.core.models import SubQuery, Table, TableMetadata
 
 
 class NextTokenBaseHandler:
@@ -39,7 +41,11 @@ class NextTokenBaseHandler:
             self._handle(token, holder)
             self.indicator = False
 
-    def end_of_query_cleanup(self, holder: SubQueryLineageHolder) -> None:
+    def end_of_query_cleanup(
+        self,
+        holder: SubQueryLineageHolder,
+        target_table: Optional[Union[SubQuery, Table]],
+    ) -> None:
         """
         Optional hook to be called at the end of statement or subquery
         """
