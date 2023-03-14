@@ -1213,7 +1213,24 @@ expected = {
             "catalog_sales",
         },
         {"query33"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("i_manufact_id", "item"),
+                ColumnQualifierTuple("i_manufact_id", "query33"),
+            ),
+            (
+                ColumnQualifierTuple("ss_ext_sales_price", None),
+                ColumnQualifierTuple("total_sales", "query33"),
+            ),
+            (
+                ColumnQualifierTuple("cs_ext_sales_price", None),
+                ColumnQualifierTuple("total_sales", "query33"),
+            ),
+            (
+                ColumnQualifierTuple("ws_ext_sales_price", None),
+                ColumnQualifierTuple("total_sales", "query33"),
+            ),
+        ],
         {},
     ),
     34: (
@@ -2096,6 +2113,7 @@ expected = {
     ),
     54: (
         {
+            "my_customers",
             "customer_address",
             "web_sales",
             "item",
@@ -2138,7 +2156,24 @@ expected = {
             "catalog_sales",
         },
         {"query56"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("i_item_id", "item"),
+                ColumnQualifierTuple("i_item_id", "query56"),
+            ),
+            (
+                ColumnQualifierTuple("ss_ext_sales_price", None),
+                ColumnQualifierTuple("total_sales", "query56"),
+            ),
+            (
+                ColumnQualifierTuple("cs_ext_sales_price", None),
+                ColumnQualifierTuple("total_sales", "query56"),
+            ),
+            (
+                ColumnQualifierTuple("ws_ext_sales_price", None),
+                ColumnQualifierTuple("total_sales", "query56"),
+            ),
+        ],
         {},
     ),
     57: (
@@ -2356,7 +2391,24 @@ expected = {
             "catalog_sales",
         },
         {"query60"},
-        [],
+        [
+            (
+                ColumnQualifierTuple("ss_ext_sales_price", None),
+                ColumnQualifierTuple("total_sales", "query60"),
+            ),
+            (
+                ColumnQualifierTuple("cs_ext_sales_price", None),
+                ColumnQualifierTuple("total_sales", "query60"),
+            ),
+            (
+                ColumnQualifierTuple("i_item_id", "item"),
+                ColumnQualifierTuple("i_item_id", "query60"),
+            ),
+            (
+                ColumnQualifierTuple("ws_ext_sales_price", None),
+                ColumnQualifierTuple("total_sales", "query60"),
+            ),
+        ],
         {},
     ),
     61: (

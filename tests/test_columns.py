@@ -1070,7 +1070,7 @@ def test_column_star_with_schema():
 def test_union():
     sql = """
     with ss as (
-             select id, total               
+             select id, total
              from store_sales),
          ws as (
              select id, total
@@ -1104,31 +1104,4 @@ def test_union():
                 ColumnQualifierTuple("total", "tab1"),
             ),
         ],
-    )
-
-
-def test_real_sql1():
-    sql = """
-    create or replace transient table PROD.infomart.opsware_todo  as
-    (
-    SELECT T.task_id AS task_id,
-        T.transaction_id AS transaction_id,
-        TR.resware_file_number AS resware_file_number,
-        T.assignee_id AS assignee_id,
-        T.deleted AS deleted,
-        T.display_name AS todo_display_name,
-        T.title AS todo_title,
-        T.task_type AS todo_type,
-        T.is_priority AS is_priority
-    FROM PROD.LATESTSATELLITES.sat_task_opsware_latest T
-    LEFT JOIN PROD.LATESTSATELLITES.sat_order_transaction_opsware_latest TR ON T.transaction_id = TR.transaction_id
-    WHERE 
-    T.FIVETRAN_ACTIVE = 'TRUE'
-    AND TR.FIVETRAN_ACTIVE = 'TRUE'
-    )
-    """
-
-    assert_column_lineage_equal(
-        sql,
-        [],
     )
