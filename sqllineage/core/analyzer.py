@@ -1,6 +1,6 @@
 from functools import reduce
 from operator import add
-from typing import List, NamedTuple, Optional, Set, Union
+from typing import Dict, List, NamedTuple, Optional, Set, Union
 
 from sqlparse.sql import (
     Function,
@@ -13,8 +13,9 @@ from sqlparse.sql import (
 
 from sqllineage.core.handlers.base import CurrentTokenBaseHandler, NextTokenBaseHandler
 from sqllineage.core.holders import StatementLineageHolder, SubQueryLineageHolder
-from sqllineage.core.models import SubQuery, Table, TableMetadata
+from sqllineage.core.models import Column, SubQuery, Table, TableMetadata
 from sqllineage.exceptions import SQLLineageException
+from sqllineage.utils.constant import EdgeType
 from sqllineage.utils.sqlparse import (
     get_subquery_parentheses,
     is_subquery,
@@ -24,7 +25,7 @@ from sqllineage.utils.sqlparse import (
 
 class AnalyzerContext(NamedTuple):
     subquery: Optional[SubQuery] = None
-    prev_cte: Optional[Set[SubQuery]] = None
+    prev_cte: Optional[Dict[SubQuery, Set[Column]]] = None
 
 
 class LineageAnalyzer:
@@ -108,11 +109,15 @@ class LineageAnalyzer:
         holder = SubQueryLineageHolder()
         if context.prev_cte is not None:
             # CTE can be referenced by subsequent CTEs
-            for cte in context.prev_cte:
+            for cte, columns in context.prev_cte.items():
                 holder.add_cte(cte)
+                for column in columns:
+                    holder.add_table_has_column(column)
+
         if context.subquery is not None:
             # If within subquery, then manually add subquery as target table
             holder.add_write(context.subquery)
+
         current_handlers = [
             handler_cls() for handler_cls in CurrentTokenBaseHandler.__subclasses__()
         ]
@@ -152,8 +157,9 @@ class LineageAnalyzer:
 
             # recursively extracting each subquery of the parent and merge
             for sq in subqueries:
+                prev_cte = cls._find_cte_columns(holder)
                 sq_holder = cls._extract_from_dml(
-                    sq.token, AnalyzerContext(sq, holder.cte), metadata
+                    sq.token, AnalyzerContext(sq, prev_cte), metadata
                 )
                 holder |= sq_holder
 
@@ -161,6 +167,23 @@ class LineageAnalyzer:
                 next_handler.end_of_query_cleanup(holder, target_table)
 
         return holder
+
+    @classmethod
+    def _find_cte_columns(
+        cls,
+        holder: SubQueryLineageHolder,
+    ) -> Dict[SubQuery, Set[Column]]:
+        """
+        Finds the previous CTEs and their columns from the holder graph
+        """
+        mapping: Dict[SubQuery, Set[Column]] = {}
+        for src, tgt, attr in holder.graph.edges(data=True):
+            if attr.get("type") == EdgeType.HAS_COLUMN and src in holder.cte:
+                if src not in mapping:
+                    mapping[src] = set()
+                mapping[src].add(tgt)
+
+        return mapping
 
     @classmethod
     def parse_subquery(cls, token: TokenList) -> List[SubQuery]:

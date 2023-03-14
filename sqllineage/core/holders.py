@@ -103,12 +103,15 @@ class SubQueryLineageHolder(ColumnLineageMixin):
     def add_cte(self, value) -> None:
         self._property_setter(value, NodeTag.CTE)
 
+    def add_table_has_column(self, col: Column) -> None:
+        if col.parent is not None:
+            # starting NetworkX v2.6, None is not allowed as node, see https://github.com/networkx/networkx/pull/4892
+            self.graph.add_edge(col.parent, col, type=EdgeType.HAS_COLUMN)
+
     def add_column_lineage(self, src: Column, tgt: Column) -> None:
         self.graph.add_edge(src, tgt, type=EdgeType.LINEAGE)
-        self.graph.add_edge(tgt.parent, tgt, type=EdgeType.HAS_COLUMN)
-        if src.parent is not None:
-            # starting NetworkX v2.6, None is not allowed as node, see https://github.com/networkx/networkx/pull/4892
-            self.graph.add_edge(src.parent, src, type=EdgeType.HAS_COLUMN)
+        self.add_table_has_column(src)
+        self.add_table_has_column(tgt)
 
 
 class StatementLineageHolder(SubQueryLineageHolder, ColumnLineageMixin):
