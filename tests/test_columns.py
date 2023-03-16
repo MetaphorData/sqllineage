@@ -1105,3 +1105,87 @@ def test_union():
             ),
         ],
     )
+
+    sql = """
+    insert overwrite table tab1
+    select *
+    FROM (
+         SELECT 'store' as channel, sid as id, total
+         FROM store_sales
+         UNION ALL
+         SELECT 'web' as channel, wid as id, total
+         FROM web_sales) foo
+    """
+
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("sid", "store_sales"),
+                ColumnQualifierTuple("id", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("wid", "web_sales"),
+                ColumnQualifierTuple("id", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("total", "store_sales"),
+                ColumnQualifierTuple("total", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("total", "web_sales"),
+                ColumnQualifierTuple("total", "tab1"),
+            ),
+        ],
+    )
+
+    sql = """
+        insert overwrite table tab1
+        select channel, col_name, d_year
+        FROM (
+                 SELECT 'store' as channel,
+                        'ss_store_sk' as col_name,
+                        d_year
+                 FROM store_sales
+                 UNION ALL
+                 SELECT 'web' as channel,
+                        'ws_ship_customer_sk' as col_name,
+                        d_year
+                 FROM web_sales) foo
+        """
+
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("d_year", "store_sales"),
+                ColumnQualifierTuple("d_year", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("d_year", "web_sales"),
+                ColumnQualifierTuple("d_year", "tab1"),
+            ),
+        ],
+    )
+
+
+def test_select_distinct():
+    sql = """
+    insert overwrite table tab1
+    select distinct a, b
+    from segments
+    """
+
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("a", "segments"),
+                ColumnQualifierTuple("a", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("b", "segments"),
+                ColumnQualifierTuple("b", "tab1"),
+            ),
+        ],
+    )

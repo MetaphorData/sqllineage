@@ -47,8 +47,10 @@ class SourceHandler(NextTokenBaseHandler):
         if any(re.match(regex, token.normalized) for regex in self.SOURCE_TABLE_TOKENS):
             self.column_flag = False
             return True
-        elif bool(token.normalized == "SELECT"):
+        elif token.normalized == "SELECT":
             self.column_flag = True
+            return True
+        elif token.normalized == "DISTINCT" and self.column_flag:
             return True
         else:
             return False

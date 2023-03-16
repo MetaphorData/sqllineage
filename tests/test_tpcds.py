@@ -2113,7 +2113,6 @@ expected = {
     ),
     54: (
         {
-            "my_customers",
             "customer_address",
             "web_sales",
             "item",
