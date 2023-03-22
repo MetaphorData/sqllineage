@@ -161,7 +161,7 @@ class SubQuery:
         """
         self.token = token
         self._query = token.value
-        self.alias = alias if alias is not None else f"subquery_{hash(self)}"
+        self.alias = alias.lower() if alias is not None else f"subquery_{hash(self)}"
 
     def __str__(self):
         return self.alias

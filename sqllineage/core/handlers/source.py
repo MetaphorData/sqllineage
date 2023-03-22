@@ -156,14 +156,16 @@ class SourceHandler(NextTokenBaseHandler):
                 parenthesis, alias = subqueries[0]
                 read = SubQuery.of(parenthesis, alias)
             else:
-                cte_dict = {s.alias: s for s in holder.cte}
                 if "." not in identifier.value:
-                    cte = cte_dict.get(identifier.get_real_name())
+                    cte_dict = {s.alias: s for s in holder.cte}
+                    cte = cte_dict.get(identifier.get_real_name().lower())
                     if cte is not None:
                         # could reference CTE with or without alias
                         read = SubQuery.of(
                             cte.token,
-                            identifier.get_alias() or identifier.get_real_name(),
+                            (
+                                identifier.get_alias() or identifier.get_real_name()
+                            ).lower(),
                         )
                 if read is None:
                     read = Table.of(identifier, self.table_metadata)

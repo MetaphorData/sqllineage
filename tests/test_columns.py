@@ -745,8 +745,8 @@ SELECT wt.col1 FROM wtab1 wt"""
 
 
 def test_column_reference_from_cte_using_qualifier():
-    sql = """WITH wtab1 AS (SELECT col1 FROM tab2)
-INSERT OVERWRITE TABLE tab1
+    sql = """WITH WTAB1 AS (SELECT col1 FROM tab2)
+INSERT OVERWRITE TABLE TAB1
 SELECT wtab1.col1 FROM wtab1"""
     assert_column_lineage_equal(
         sql,
