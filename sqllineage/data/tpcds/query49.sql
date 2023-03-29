@@ -37,10 +37,10 @@ where (
           )
 union
 select 'catalog' as channel
-     , catalog.item
-     , catalog.return_ratio
-     , catalog.return_rank
-     , catalog.currency_rank
+     , catalogs.item
+     , catalogs.return_ratio
+     , catalogs.return_rank
+     , catalogs.currency_rank
 from (
          select item
               , return_ratio
@@ -66,7 +66,7 @@ from (
                  and d_moy = 12
                group by cs.cs_item_sk
               ) in_cat
-     ) catalog
+     ) catalogs
 where (
               catalog.return_rank <= 10
               or

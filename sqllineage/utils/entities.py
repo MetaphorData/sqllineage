@@ -11,6 +11,7 @@ class SubQueryTuple(NamedTuple):
 class ColumnQualifierTuple(NamedTuple):
     column: str
     qualifier: Optional[str]
+    fullname: Optional[str] = None
 
 
 class ColumnExpression(NamedTuple):

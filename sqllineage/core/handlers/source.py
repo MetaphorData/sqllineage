@@ -17,6 +17,7 @@ from sqllineage.core.holders import SubQueryLineageHolder
 from sqllineage.core.models import Column, Path, SubQuery, Table, TableMetadata
 from sqllineage.exceptions import SQLLineageException
 from sqllineage.utils.constant import EdgeType
+from sqllineage.utils.entities import ColumnQualifierTuple
 from sqllineage.utils.sqlparse import (
     get_subquery_parentheses,
     is_subquery,
@@ -115,6 +116,12 @@ class SourceHandler(NextTokenBaseHandler):
             holder.add_read(tbl)
         subquery_columns = self._find_subquery_columns(holder)
 
+        # match source column qualifier based on all the table alias
+        all_table_alias = self._get_alias_mapping_from_table_group(self.tables, holder)
+        for column in self.columns:
+            self._match_source_column_qualifier(column, all_table_alias)
+
+        # find column lineage
         self.union_barriers.append((len(self.columns), len(self.tables)))
         for i, (col_barrier, tbl_barrier) in enumerate(self.union_barriers):
             prev_col_barrier, prev_tbl_barrier = (
@@ -212,3 +219,36 @@ class SourceHandler(NextTokenBaseHandler):
                 mapping[src].add(tgt)
 
         return mapping
+
+    @staticmethod
+    def _match_source_column_qualifier(
+        column: Column, table_alias: Dict[str, Union[Path, Table, SubQuery]]
+    ) -> None:
+        """
+        Best effort to match the qualifier of the source columns from their fullnames.
+
+        If the fullname contains only one segment (no "."), then no action.
+        If the fullname's prefix matches any of the table alias, then use that table as the qualifier.
+        If no alias matches the fullname, treat the fullname as a nested column, with the first segment as
+        the top-level column.
+        """
+        for i, source_col in enumerate(column.source_columns):
+            col, qualifier, fullname = source_col
+            if not fullname or fullname.count(".") == 0:
+                break
+
+            for alias in table_alias.keys():
+                if (
+                    fullname.startswith(alias)
+                    and len(fullname) > len(alias)
+                    and fullname[len(alias)] == "."
+                ):
+                    column.source_columns[i] = ColumnQualifierTuple(
+                        col, alias, fullname
+                    )
+                    break
+            else:
+                top_level_column = fullname.split(".")[0]
+                column.source_columns[i] = ColumnQualifierTuple(
+                    top_level_column, None, fullname
+                )

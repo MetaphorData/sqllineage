@@ -192,7 +192,7 @@ class Column:
         self._parent: Set[Union[Table, SubQuery]] = set()
         self.raw_name = escape_identifier_name(name)
         self.source_columns: List[ColumnQualifierTuple] = kwargs.pop(
-            "source_columns", ((self.raw_name, None),)
+            "source_columns", [ColumnQualifierTuple(self.raw_name, None)]
         )
         self.expression: ColumnExpression = kwargs.pop(
             "expression", ColumnExpression(True, None)
@@ -250,9 +250,12 @@ class Column:
                     )
             else:
                 # select column name directly without alias
+                real_name, parent_name = get_identifier_name_and_parent(token)
                 return Column(
-                    token.get_real_name(),
-                    source_columns=((token.get_real_name(), token.get_parent_name()),),
+                    real_name,
+                    source_columns=[
+                        ColumnQualifierTuple(real_name, parent_name, token.value)
+                    ],
                     expression=ColumnExpression(True, None),
                 )
         else:
@@ -347,8 +350,9 @@ class Column:
                 ]
             else:
                 # col1 AS col2
+                real_name, parent_name = get_identifier_name_and_parent(token)
                 source_columns = [
-                    ColumnQualifierTuple(token.get_real_name(), token.get_parent_name())
+                    ColumnQualifierTuple(real_name, parent_name, token.value)
                 ]
         else:
             if token.ttype == T.Wildcard:
@@ -413,7 +417,7 @@ class Column:
         column_lineage: Set[Tuple[Column, Column]] = set()
         alias_mapping_values = set(alias_mapping.values())
 
-        for src_col, qualifier in self.source_columns:
+        for src_col, qualifier, _ in self.source_columns:
             if qualifier is None:
                 if src_col == "*":
                     # select *

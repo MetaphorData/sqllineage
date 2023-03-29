@@ -1189,3 +1189,68 @@ def test_select_distinct():
             ),
         ],
     )
+
+
+def test_nested_column():
+    sql = """
+    create or replace table tab1 as
+    SELECT id,
+        attributes.status,
+        attributes.category.category_id + 1 as category_1,
+        t.name,
+        MIN(t.count) tcount
+    FROM tab2 t
+    """
+
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("id", "tab2"),
+                ColumnQualifierTuple("id", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("attributes", "tab2"),
+                ColumnQualifierTuple("status", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("attributes", "tab2"),
+                ColumnQualifierTuple("category_1", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("name", "tab2"),
+                ColumnQualifierTuple("name", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("count", "tab2"),
+                ColumnQualifierTuple("tcount", "tab1"),
+            ),
+        ],
+    )
+
+    sql = """
+    with ss as (
+         select item.id, item.total.amount, tab2.count as tc
+         from tab2)
+    insert overwrite table tab1
+    select *
+    from ss
+    """
+
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("item", "tab2"),
+                ColumnQualifierTuple("id", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("item", "tab2"),
+                ColumnQualifierTuple("amount", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("count", "tab2"),
+                ColumnQualifierTuple("tc", "tab1"),
+            ),
+        ],
+    )

@@ -1829,7 +1829,7 @@ expected = {
                 ColumnQualifierTuple("currency_rank", "query49"),
             ),
             (
-                ColumnQualifierTuple("return_ratio", "catalog"),
+                ColumnQualifierTuple("cs_quantity", "catalog_sales"),
                 ColumnQualifierTuple("return_ratio", "query49"),
             ),
             (
@@ -1841,7 +1841,7 @@ expected = {
                 ColumnQualifierTuple("currency_rank", "query49"),
             ),
             (
-                ColumnQualifierTuple("item", "catalog"),
+                ColumnQualifierTuple("cs_item_sk", "catalog_sales"),
                 ColumnQualifierTuple("item", "query49"),
             ),
             (
@@ -1853,7 +1853,7 @@ expected = {
                 ColumnQualifierTuple("return_ratio", "query49"),
             ),
             (
-                ColumnQualifierTuple("return_rank", "catalog"),
+                ColumnQualifierTuple("cs_quantity", "catalog_sales"),
                 ColumnQualifierTuple("return_rank", "query49"),
             ),
             (
@@ -1873,7 +1873,7 @@ expected = {
                 ColumnQualifierTuple("item", "query49"),
             ),
             (
-                ColumnQualifierTuple("currency_rank", "catalog"),
+                ColumnQualifierTuple("cs_net_paid", "catalog_sales"),
                 ColumnQualifierTuple("currency_rank", "query49"),
             ),
             (
@@ -1883,6 +1883,18 @@ expected = {
             (
                 ColumnQualifierTuple("wr_return_quantity", "web_returns"),
                 ColumnQualifierTuple("return_rank", "query49"),
+            ),
+            (
+                ColumnQualifierTuple("cr_return_quantity", "catalog_returns"),
+                ColumnQualifierTuple("return_rank", "query49"),
+            ),
+            (
+                ColumnQualifierTuple("cr_return_amount", "catalog_returns"),
+                ColumnQualifierTuple("currency_rank", "query49"),
+            ),
+            (
+                ColumnQualifierTuple("cr_return_quantity", "catalog_returns"),
+                ColumnQualifierTuple("return_ratio", "query49"),
             ),
         ],
         {},
