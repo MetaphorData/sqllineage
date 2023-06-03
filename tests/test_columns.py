@@ -3,6 +3,7 @@ import pytest
 from sqllineage.runner import LineageRunner
 from sqllineage.utils.entities import ColumnQualifierTuple
 from sqllineage.utils.schemaFetcher import DummySchemaFetcher
+
 from .helpers import assert_column_lineage_equal
 
 
@@ -1251,6 +1252,30 @@ def test_nested_column():
             (
                 ColumnQualifierTuple("count", "tab2"),
                 ColumnQualifierTuple("tc", "tab1"),
+            ),
+        ],
+    )
+
+
+def test_create_view_with_columns_as_select():
+    sql = """
+    create or replace view t1(id, name) as (
+    with cte as
+        (select id, name from t2)
+    select id, name from cte
+    );
+    """
+
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("id", "t2"),
+                ColumnQualifierTuple("id", "t1"),
+            ),
+            (
+                ColumnQualifierTuple("name", "t2"),
+                ColumnQualifierTuple("name", "t1"),
             ),
         ],
     )
