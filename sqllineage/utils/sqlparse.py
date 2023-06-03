@@ -144,7 +144,8 @@ def get_subquery_parentheses(
     """
     subquery = []
     as_idx, as_ = token.token_next_by(m=(Keyword, "AS"))
-    # get all token subgroups that does not start with an Identifier, e.g. table name with column definitions "table1 (col1, col2)".
+    # get all token subgroups that does not start with an Identifier,
+    # e.g. table name with column definitions "table1 (col1, col2)".
     sublist = [
         s for s in token.get_sublists() if not isinstance(s.tokens[0], Identifier)
     ]
