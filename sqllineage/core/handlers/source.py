@@ -238,11 +238,7 @@ class SourceHandler(NextTokenBaseHandler):
                 break
 
             for alias in table_alias.keys():
-                if (
-                    fullname.startswith(alias)
-                    and len(fullname) > len(alias)
-                    and fullname[len(alias)] == "."
-                ):
+                if fullname.lower().startswith(f"{alias.lower()}."):
                     column.source_columns[i] = ColumnQualifierTuple(
                         col, alias, fullname
                     )

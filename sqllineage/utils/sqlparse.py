@@ -110,8 +110,18 @@ def get_identifier_name_and_parent(identifier: Identifier) -> Tuple[str, Optiona
         start=len(identifier.tokens),
         reverse=True,
     )
-    real_name = identifier._get_first_name(dot_idx, real_name=True)
 
+    if not dot_idx:
+        # if no dot in identifier, could be subquery with alias, e.g. (SELECT ...) as xxx
+        # retrieve the alias as the real name, no parent name
+        subquery = [
+            token for token in identifier.tokens if isinstance(token, Parenthesis)
+        ]
+        alias = [token for token in identifier.tokens if isinstance(token, Identifier)]
+        if len(subquery) == 1 and len(alias) == 1:
+            return alias[0]._get_first_name(real_name=True), None
+
+    real_name = identifier._get_first_name(dot_idx, real_name=True)
     parent_name = (
         "".join(
             [

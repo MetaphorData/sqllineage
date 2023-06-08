@@ -1278,3 +1278,31 @@ def test_create_view_with_columns_as_select():
             ),
         ],
     )
+
+
+def test_subquery_with_alias():
+    sql = """
+    create or replace view tab1 as (
+      SELECT DISTINCT
+        A.id,
+        AL.name
+      FROM tab2 AL
+      LEFT JOIN (
+        SELECT id
+        FROM tab3) AS A
+      );
+    """
+
+    assert_column_lineage_equal(
+        sql,
+        [
+            (
+                ColumnQualifierTuple("id", "tab3"),
+                ColumnQualifierTuple("id", "tab1"),
+            ),
+            (
+                ColumnQualifierTuple("name", "tab2"),
+                ColumnQualifierTuple("name", "tab1"),
+            ),
+        ],
+    )
