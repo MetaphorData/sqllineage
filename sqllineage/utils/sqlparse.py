@@ -114,12 +114,22 @@ def get_identifier_name_and_parent(identifier: Identifier) -> Tuple[str, Optiona
     if not dot_idx:
         # if no dot in identifier, could be subquery with alias, e.g. (SELECT ...) as xxx
         # retrieve the alias as the real name, no parent name
+        # most of the time 'xxx' after 'as' should be a simple identifier, but sometime is recognized as a keyword
         subquery = [
             token for token in identifier.tokens if isinstance(token, Parenthesis)
         ]
-        alias = [token for token in identifier.tokens if isinstance(token, Identifier)]
-        if len(subquery) == 1 and len(alias) == 1:
-            return alias[0]._get_first_name(real_name=True), None
+        alias_identifier = [
+            token for token in identifier.tokens if isinstance(token, Identifier)
+        ]
+        alias_keyword = [
+            token
+            for token in identifier.tokens
+            if token.is_keyword and token.normalized != "AS"
+        ]
+        if len(subquery) == 1 and len(alias_identifier) == 1:
+            return alias_identifier[0]._get_first_name(real_name=True), None
+        if len(subquery) == 1 and len(alias_keyword) == 1:
+            return alias_keyword[0].value, None
 
     real_name = identifier._get_first_name(dot_idx, real_name=True)
     parent_name = (

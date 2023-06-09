@@ -1284,13 +1284,14 @@ def test_subquery_with_alias():
     sql = """
     create or replace view tab1 as (
       SELECT DISTINCT
-        A.id,
+        LINK.id,
         AL.name
       FROM tab2 AL
       LEFT JOIN (
         SELECT id
-        FROM tab3) AS A
-      );
+        FROM tab3
+      ) as LINK
+    );
     """
 
     assert_column_lineage_equal(
